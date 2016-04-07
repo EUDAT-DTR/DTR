@@ -1,0 +1,57 @@
+<!--
+#*
+Available variables:
+queryStr - the string used to search (or an error message if no string was provided)
+numResults - the number of items returned by the search
+results - an array holding an 'AttributePair' object with two accessible Strings 'key' and 'val'
+
+Please see Apache VTL (Velocity Template Language) documentation for more details
+*#
+Powered by Apache Velocity
+-->
+
+
+<html>
+<head>
+<title>$queryStr - Search Results</title>
+
+<script type="text/javascript">
+function submitNewQuery(){
+	document.getElementById('query').value = "($queryStr) AND (" + document.getElementById("query").value + ")";
+	return true;}
+</script>
+
+</head>
+<body>
+<a href="#" onClick="history.go(-1);return false;">Go Back</a>
+<br/><br/>
+<form action="/search" method=POST> 
+Search again: <input type=text name="q"> 
+</form><br/>
+
+displaying $numResults results for <i>$queryStr</i>
+<br  />
+
+<table class="search_results">
+#foreach ($result in $results)
+	<tr>
+	<td valign="top">$result.elementLink</td>
+	<td>
+	<table class="do_attributes">
+	#foreach ($attribute in $result.attributes)
+		<tr><td class="search_result_key">$attribute.key</td><td class="search_result_val">$attribute.val</td></tr>
+	#end
+	</table>
+	</td>
+	</tr>
+#end
+
+</table>
+<br/> 
+Refine your search:
+<form onSubmit="javascript: submitNewQuery()" action="/search" method=POST> 
+Search terms: <input id="query" type=text name="q"><input type="submit" value="Search within these results"> 
+</form><br/>
+
+</body>
+</html>

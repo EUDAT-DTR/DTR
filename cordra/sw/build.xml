@@ -1,0 +1,841 @@
+<project name="do" default="all" basedir=".">
+  <property name="encoding" value="utf-8"/>
+  <property name="baseVersion"  value="2.5.18"/>
+  <property name="clientversion"  value="${baseVersion}"/>
+  <property name="appendRevisionNumber" value="true"/>
+  <property name="src" value="src"/>
+  <property name="base" value="."/>
+  <property name="lib" value="lib"/>
+  <property name="doc" value="doc"/>
+  <property name="MacDOSyncApp" value="./scripts/macosx/DO Synchronizer.app/Contents/Resources/Java/"/>
+  <property name="build" value="build"/>
+  <!-- <property name="build.compiler"  value="jikes"/> -->
+  <!-- <property name="build.compiler"  value="extJavac"/> -->
+  <property name="build.compiler"  value="modern"/>
+  <property name="build.sysclasspath" value="ignore" />  <!-- to get rid of ridiculous "includeantruntime not set messages"-->
+  <property name="source.version" value="1.6"/>
+  <property name="target.version" value="1.6"/>
+  <property name="build.includeantruntime" value="false"/>
+  <property name="javac.includeantruntime" value="false"/>
+  <property name="includeantruntime" value="false"/>
+
+  <!-- <property name="build.compiler"  value="classic"/> -->
+  <property name="dist"  value="dist"/>
+  <property name="debug"  value="on"/>
+  <!-- <property name="debug"  value="off"/> -->
+  <property name="optimize"  value="off"/>
+
+  <path id="classpath">
+      <fileset dir="${lib}">
+        <include name="*.jar" />
+      </fileset>
+
+      <fileset dir="${lib}/jetty">
+  	    <include name="*.jar" />
+  	  </fileset>
+
+      <!--
+      <fileset dir="${lib}/amazons3">
+        <include name="*.jar" />
+      </fileset>
+      -->
+  </path>
+
+  <target name="all" depends="init,lib,apps"/>
+
+  <target name="apps" depends="doserver,doutilgui,doclient,dogui,hdlstorage,audit,dotest,cmdline"/>
+
+  <target name="init">
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${build}"/>
+    <tstamp/>
+
+    <exec executable="hg" outputproperty="hg.id" failifexecutionfails="false">
+        <arg line="id -i"/>
+    </exec>
+    <exec executable="hg" outputproperty="hg.date.output" failifexecutionfails="false">
+        <env key="TZ" value="UTC"/>
+        <arg line="parents --template '{date(date|localdate, &quot;%Y%m%d%H%M%S&quot;)}'"/>
+    </exec>
+    <loadresource property="hg.date" failonerror="false">
+        <propertyresource name="hg.date.output"/>
+        <filterchain><striplinebreaks/></filterchain>
+    </loadresource>
+    <loadresource property="hg.id.plus" failonerror="false">
+        <propertyresource name="hg.id"/>
+        <filterchain>
+            <replaceregex pattern="[^+]" replace="" flags="g"/>
+        </filterchain>
+    </loadresource>
+    <property name="hg.id.plus" value=""/>
+    <condition property="version" value="${baseVersion}.${hg.date}${hg.id.plus}">
+      <and>
+        <istrue value="${appendRevisionNumber}"/>
+        <isset property="hg.id"/>
+        <isset property="hg.date"/>
+        <length string="${hg.date}" when="less" length="30"/>
+      </and>
+    </condition>
+    <property name="version" value="${baseVersion}"/>
+
+    <echo message="Version ${version}"/>
+
+    <echo file="${src}/net/cnri/apps/doserver/Version.java">
+       package net.cnri.apps.doserver;
+       public class Version {
+           public static final String version="${version}";
+       }
+    </echo>
+  </target>   
+
+  <target name="lib" depends="init">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/dobj/**,
+                     net/cnri/do_api/**,
+                     net/cnri/cert/**,
+                     net/cnri/debug/**"
+           excludes="net/cnri/dobj/emcompat/**,net/cnri/dobj/groups/**"
+     />
+  </target>
+
+  <target name="doapi" depends="init,lib">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/do_api/**"
+     />
+  </target>
+
+  <target name="doutilgui" depends="lib">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/doutilgui/**" />
+  </target>
+
+  <target name="dotest" depends="lib">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/test/**" />
+  </target>
+
+  <target name="cmdline" depends="lib">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/cmdline/**" />
+  </target>
+
+  <target name="doclient" depends="lib,doutilgui">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/doclient/**, net/cnri/apps/sample/**" />
+  </target>   
+
+  <target name="dogui" depends="lib,doutilgui">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/dogui/**" />
+  </target>   
+  
+  <target name="dojython" depends="lib,doutilgui">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/dojython/**" />
+  </target>   
+
+<!--  
+  <target name="dogw-smtp" depends="lib,doutilgui">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/dogw/smtp/**"
+            />
+  </target>   
+-->
+
+  <target name="audit" depends="lib,doutilgui">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/auditgui/**" />
+  </target>   
+
+  <target name="passport" depends="lib">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/passport/**" />
+  </target>   
+
+  <target name="dogalserver" depends="lib">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/dogalserver/**" />
+  </target>   
+
+  <target name="doserver" depends="lib">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/doserver/**" excludes="net/cnri/apps/doserver/AmazonS3*" />
+  </target>   
+
+  <target name="doimap" depends="lib,doapi">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/doimap/**" />
+  </target>   
+
+  <target name="hdlstorage" depends="lib">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/apps/hdlstorage/**" />
+    <jar destfile="${dist}/hdlstorage.jar">
+      <fileset dir="${build}" includes="net/cnri/apps/hdlstorage/**" />
+    </jar>
+  </target>   
+
+  <target name="standardops" depends="init">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/knowbots/standardops/*" />
+    <delete quiet="true"> 
+      <fileset dir="${build}/_KNOWBOT" includes=""/> 
+    </delete>
+    <copy file="${src}/net/cnri/knowbots/standardops/metadata.dict"
+          todir="${build}/_KNOWBOT/"/>
+    <jar destfile="${dist}/standardopsbot.jar">
+      <fileset dir="${build}" includes="_KNOWBOT/metadata.dict,net/cnri/knowbots/standardops/**" />
+    </jar>
+  </target>   
+
+  <target name="emcompat" depends="init">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/knowbots/emcompat/*" />
+    <delete quiet="true"> 
+      <fileset dir="${build}/_KNOWBOT" includes=""/> 
+    </delete>
+    <copy file="${src}/net/cnri/knowbots/emcompat/metadata.dict"
+          todir="${build}/_KNOWBOT/"/>
+    <jar destfile="${dist}/emcompat.jar">
+      <fileset dir="${build}" includes="_KNOWBOT/metadata.dict,net/cnri/knowbots/emcompat/**" />
+    </jar>
+  </target>   
+
+  <!-- EDO Knowbot:  Provides the ability to automatically load operators for 
+       digital objects, based on the types of those objects.  EDO stands for
+       Extensible Digital Objects -->  
+  <target name="edo" depends="init">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"  destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/knowbots/edoops/*" />
+    <delete quiet="true"> 
+      <fileset dir="${build}/_KNOWBOT" includes=""/> 
+    </delete>
+    <copy file="${src}/net/cnri/knowbots/edoops/metadata.dict"
+          todir="${build}/_KNOWBOT/"/>
+    <jar destfile="${dist}/edobot.jar">
+      <fileset dir="${build}" includes="_KNOWBOT/metadata.dict,net/cnri/knowbots/edoops/**" />
+    </jar>
+  </target>   
+  
+  <target name="indexbot" depends="init">
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="classpath"
+           destdir="${build}" encoding="${encoding}"
+           includes="net/cnri/knowbots/indexbot/*" />
+    <delete quiet="true"> 
+      <fileset dir="${build}/_KNOWBOT" includes=""/> 
+    </delete>
+    <copy file="${src}/net/cnri/knowbots/indexbot/metadata.dict"
+          todir="${build}/_KNOWBOT/"/>
+    <jar destfile="${dist}/indexbot.jar">
+      <fileset dir="${build}" includes="_KNOWBOT/metadata.dict,net/cnri/knowbots/indexbot/**" />
+      <zipgroupfileset dir="${src}" includes="${lib}/je-3.3.98.jar"/>
+    </jar>
+  </target>   
+
+  <target name="lucenebot" depends="init">
+    <path id="luceneclasspath">
+      <!-- Include nutch parser plugins -->
+      <fileset dir="${lib}">
+        <include name="*.jar" />
+      </fileset>
+    </path>
+    <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
+           source="${source.version}" target="${target.version}"
+           classpathref="luceneclasspath" destdir="${build}"
+           encoding="${encoding}" includes="net/cnri/knowbots/lucene/**" />
+    <delete quiet="true"> 
+      <fileset dir="${build}/_KNOWBOT" includes="" /> 
+    </delete>
+    <copy file="${src}/net/cnri/knowbots/lucene/metadata.dict"
+          todir="${build}/_KNOWBOT/"/>
+    <jar destfile="${dist}/lucenebot.jar" duplicate="preserve">
+      <fileset dir="${build}" includes="_KNOWBOT/metadata.dict,net/cnri/knowbots/lucene/**" />
+      <zipfileset src="${lib}/lucene-core-4.7.2.jar"/>
+      <zipfileset src="${lib}/lucene-queryparser-4.7.2.jar"/>
+      <zipfileset src="${lib}/lucene-analyzers-common-4.7.2.jar"/>
+      <zipfileset src="${lib}/log4j-1.2.17.jar"/>
+    </jar>
+  </target>   
+
+
+  <!-- add build date/time/info to a file that gets included with the distribution -->
+  <target name="stamp">
+    <exec executable="/bin/sh" output="${build}/net/cnri/etc/compile.info">
+      <arg line="-c &quot;echo Compiled by `whoami`@`hostname` on `date`;echo ; grep \$Revision `find . -name \*.java`&quot;"/>
+    </exec>
+  </target>
+
+  <target name="jar" depends="init,all">
+    <!-- add the compiled code -->
+    <jar destfile="${dist}/do.jar">
+      <fileset dir="${build}" includes="net/cnri/dobj/**" />
+      <fileset dir="${build}" includes="net/cnri/do_api/**" />
+      <fileset dir="${build}" includes="net/cnri/cert/**" />
+      <fileset dir="${src}" includes="net/cnri/dobj/etc/**"/>
+    </jar>
+  </target>
+  
+  <target name="appsjar" depends="jar,doutilgui,doclient,doserver,dogui,dojython,cmdline">
+    <!-- add the compiled code -->
+    <jar destfile="${dist}/doapps.jar">
+      <fileset dir="${build}" 
+       includes="net/cnri/apps/doutilgui/**
+         net/cnri/apps/auditgui/**
+         net/cnri/apps/cmdline/**
+         net/cnri/apps/dojython/**
+         net/cnri/apps/docertutil/**
+         net/cnri/apps/doclient/**
+         net/cnri/apps/dogui/**
+         net/cnri/apps/doserver/**
+         net/cnri/apps/test/**
+         net/cnri/apps/sample/**
+         net/cnri/apps/doutilgui/**
+         "/>
+      <fileset dir="${src}" includes="
+      	 net/cnri/apps/doserver/resources/**
+         net/cnri/apps/doserver/operators/lucene-mime-types.xml
+         net/cnri/apps/dogui/view/resources/*.dict
+         net/cnri/apps/dogui/view/resources/mime.types
+         net/cnri/apps/dogui/view/images/*.png
+         net/cnri/apps/dogui/view/images/*.gif
+         log4j.do-server-default.xml
+         "/>
+    </jar>
+<!--
+    <copy todir="${MacDOSyncApp}">
+      <fileset dir="${lib}" includes="*.jar" />
+      <fileset dir="${dist}" includes="do.jar doapps.jar" />
+    </copy>
+-->
+  </target>
+
+
+  <target name="serverjar" depends="jar">
+    <!-- add the compiled code -->
+    <jar destfile="${dist}/doserver.jar">
+      <fileset dir="${build}" includes="
+         net/cnri/apps/doserver/**
+         "/>
+    </jar>
+  </target>
+
+  <target name="clean">
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete quiet="true" includeemptydirs="true"><fileset dir="${build}" includes="**/*" defaultexcludes="no"/></delete>
+    <delete quiet="true" includeemptydirs="true"><fileset dir="${dist}" includes="**/*" defaultexcludes="no"/></delete>
+  </target>
+
+  <target name="bindist" depends="clean,jar,apidoc,appsjar">
+    <mkdir dir="${dist}/do-${version}"/>
+    <mkdir dir="${dist}/do-${version}/bin"/>
+    <mkdir dir="${dist}/do-${version}/lib"/>
+    <!--<mkdir dir="${dist}/do-${version}/lib/amazons3"/>-->
+    <mkdir dir="${dist}/do-${version}/doc"/>
+    <mkdir dir="${dist}/do-${version}/doc/third_party_licenses"/>
+    <mkdir dir="${dist}/do-${version}/apidoc"/>
+    <!--
+    <javadoc packagenames="net.cnri.dobj, net.cnri.apps.dogui.controller.*, net.cnri.apps.dogui.model.*, net.cnri.apps.doserver.*, net.cnri.apps.cmdline.*, net.cnri.apps.docertutil.*, net.cnri.apps.doutilgui.*, net.cnri.apps.hdlstorage.*, net.cnri.knowbots.standardops.*"
+       classpathref="classpath"
+       sourcepath="${src}"
+       destdir="${dist}/do-${version}/apidoc/"
+       author="true"
+       additionalparam="-Xdoclint:none -notimestamp"
+       protected="true">
+       <doctitle><![CDATA[<h1>Digital Object API</h1>]]></doctitle>
+    </javadoc>
+    -->
+    <copy todir="${dist}/do-${version}/apidoc/">
+      <fileset dir="${dist}/apidoc" />
+    </copy>
+
+    <zip zipfile="${dist}/do-${version}/src.zip" basedir="${base}"
+         includes="
+             build.xml
+             scripts/launcher
+             scripts/launcher.bat
+             src/net/cnri/dobj/*.java
+             src/net/cnri/dobj/delegation/*.java
+             src/net/cnri/dobj/etc/anon*
+             src/net/cnri/do_api/**
+             src/net/cnri/registry/*.java
+             src/net/cnri/debug/*.java
+             src/net/cnri/apps/sample/**
+             src/net/cnri/apps/dogui/**
+             src/net/cnri/apps/doserver/**
+             src/net/cnri/apps/cmdline/*.java
+             src/net/cnri/apps/docertutil/*.java
+             src/net/cnri/apps/doutilgui/*.java
+             src/net/cnri/apps/hdlstorage/*.java
+             src/net/cnri/knowbots/standardops/*
+             src/net/cnri/knowbots/lucene/**
+             "
+    />
+    
+    <!-- copy jar files to the distribution's 'lib' directory -->
+    <copy file="${doc}/DO Synchronizer Guide.html" todir="${dist}/do-${version}/doc"/>
+    <copy file="${doc}/Jython Sample.txt" todir="${dist}/do-${version}/doc"/>
+    <copy file="${doc}/Protocol Specification.pdf" todir="${dist}/do-${version}/doc"/>
+    <!--<copy file="${base}/README.txt" todir="${dist}/do-${version}"/>-->
+    <copy file="${doc}/LICENSE.txt" todir="${dist}/do-${version}"/>
+    <copy file="${dist}/do.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${dist}/doapps.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/cnriutil.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/je-3.3.98.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/velocity-1.7-dep.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/velocity-tools-2.0.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/jython-2.2.1.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/javax.servlet-api-3.0.1.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/handle.jar" todir="${dist}/do-${version}/lib"/>
+    <!--<copy file="${lib}/repository.jar" todir="${dist}/do-${version}/lib"/>-->
+    <copy file="${lib}/knowbots.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/javax.mail.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/bcprov-jdk15on-151.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/bcpkix-jdk15on-151.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/lucene-core-4.7.2.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/lucene-queryparser-4.7.2.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/lucene-analyzers-common-4.7.2.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/commons-fileupload-1.2.2.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/commons-io-1.3.2.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/slf4j-api-1.7.7.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/jcl-over-slf4j-1.7.7.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/log4j-1.2.17.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/apache-log4j-extras-1.2.17.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/slf4j-log4j12-1.7.7.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/gson-2.3.1.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/commons-codec-1.9.jar" todir="${dist}/do-${version}/lib"/>
+  
+    <copy todir="${dist}/do-${version}/doc/third_party_licenses">
+       <fileset dir="${doc}/third_party_licenses" includes="*"/>
+    </copy>
+        
+    <!--
+    <copy todir="${dist}/do-${version}/lib/amazons3/">
+      <fileset dir="${lib}/amazons3" includes="*.jar" />
+    </copy>
+    -->
+
+  	<copy todir="${dist}/do-${version}/lib/jetty/">
+      <fileset dir="${lib}/jetty" includes="*.jar" />
+    </copy>
+
+<!--
+    <copy todir="${MacDOSyncApp}">
+      <fileset dir="${lib}" includes="*.jar" />
+      <fileset dir="${dist}" includes="do.jar doapps.jar" />
+    </copy>
+-->
+    <!-- copy scripts to the bin directory that will start the different apps -->
+
+    <!-- command line launcher for the DO Synchronizer -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-admintool"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.dogui.controller.Main &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/do-admintool"
+      append="true" level="error" />
+
+    <!-- command line launcher for the command-line create-user tool -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-create-user"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.dogui.controller.CreateNewUser &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/do-create-user"
+      append="true" level="error" />
+
+    <!-- command line launcher for the DO example program -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-example"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.sample.DOExample &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/do-example"
+      append="true" level="error" />
+
+    <!-- command line utility for signing knowbots.  Comes from the koe package -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/kb-signagent"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.knowbots.apps.signagent &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/kb-signagent"
+      append="true" level="error" />
+
+    <!-- the utility GUI for performing basic digital object operations -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-client"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.doclient.StartWindow &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/do-client"
+      append="true" level="error" />
+
+    <!-- the utility GUI for performing basic digital object operations -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/dogui"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.dogui.controller.Main &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/dogui"
+      append="true" level="error" />
+
+    <!-- the utility for generating DO authorization certificates -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-certgen"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.cmdline.CertGenerator &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/do-certgen"
+      append="true" level="error" />
+
+    <!-- the utility for generating DO/handle key pairs -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-keygen"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.cmdline.KeyGenerator &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/do-keygen"
+      append="true" level="error" />
+
+    <!-- the script used for testing index functions -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-indextest"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.test.IndexTest &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/do-indextest"
+      append="true" level="error" />
+
+    <!-- the script used for invoking DO operations from the command line -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-invoke"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.cmdline.Main &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/do-invoke"
+      append="true" level="error" />
+
+    <!-- the script used for configuring a blank Cordra instance from the command line -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/configure-unconfigured-cordra"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.cmdline.ConfigureCordraScript &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/configure-unconfigured-cordra"
+      append="true" level="error" />
+  	
+    <!-- the script used for testing multi-repository service functions -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-test-mm"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.test.TestMM &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/do-test-mm"
+      append="true" level="error" />
+
+    <!-- the utility GUI for accessing the audit functions of a server -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-audit"/>
+    <echo message="exec java -cp &quot;${CP}&quot; net.cnri.apps.auditgui.AuditWindow &quot;$@&quot; "
+      file="${dist}/do-${version}/bin/do-audit"
+      append="true" level="error" />
+
+    <!-- the front-end program that provides a secure interface to a repository -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-server"/>
+    <echo message="exec java -Xmx3G -cp &quot;${CP}&quot; net.cnri.apps.doserver.Main &quot;$@&quot;"
+      file="${dist}/do-${version}/bin/do-server"
+      append="true" level="error" />
+
+    <!-- invokes a jython interpreter with the DO environment preloaded -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-jython"/>
+    <echo message="exec java -Xmx1000000000 -cp &quot;${CP}&quot; net.cnri.apps.dojython.JythonMain &quot;$@&quot;"
+      file="${dist}/do-${version}/bin/do-jython"
+      append="true" level="error" />
+
+    <!-- launcher for any java app that needs the DO environment setup -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-java"/>
+    <echo message="exec java -cp &quot;${CP}&quot; $@ "
+      file="${dist}/do-${version}/bin/do-java" append="true" level="error" />
+      
+
+    <!-- invokes the create-user app with the DO environment preloaded -->
+    <copy file="scripts/launcher" tofile="${dist}/do-${version}/bin/do-createuser"/>
+    <echo message="exec java -Xmx1000000000 -cp &quot;${CP}&quot; net.cnri.apps.dogui.controller.CreateNewUser &quot;$@&quot;"
+      file="${dist}/do-${version}/bin/do-createuser"
+      append="true" level="error" />
+
+
+
+  	<!-- The append script that adds the current path to CP (needed for paths with spaces -->
+  	 <copy file="scripts/cpappend.bat" tofile="${dist}/do-${version}/bin/cpappend.bat"/>
+  	
+  	<copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-admintool.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot; net.cnri.apps.dogui.controller.Main %*"
+      file="${dist}/do-${version}/bin/do-admintool.bat"
+      append="true" level="error" />
+
+    <!-- windows command line launcher for the command-line create-user tool -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/dna-create-user.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot; net.cnri.apps.dogui.controller.CreateNewUser %*"
+      file="${dist}/do-${version}/bin/dna-create-user.bat"
+      append="true" level="error" />
+
+    <!-- command line launcher for the DO example program -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-example.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot; net.cnri.apps.sample.DOExample %*"
+      file="${dist}/do-${version}/bin/do-example.bat"
+      append="true" level="error" />
+
+    <!-- command line utility for signing knowbots.  Comes from the koe package -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/kb-signagent.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot; net.cnri.knowbots.apps.signagent %*"
+      file="${dist}/do-${version}/bin/kb-signagent.bat"
+      append="true" level="error" />
+
+    <!-- the utility GUI for performing basic digital object operations -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-client.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot; net.cnri.apps.doclient.StartWindow %*"
+      file="${dist}/do-${version}/bin/do-client.bat"
+      append="true" level="error" />
+
+    <!-- the utility GUI for performing basic digital object operations -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/dogui.bat"/>
+  	<echo message="java -Xmx500m -cp &quot;%CP%&quot; net.cnri.apps.dogui.controller.Main %*"
+      file="${dist}/do-${version}/bin/dogui.bat"
+      append="true" level="error" />
+
+    <!-- the utility for generating DO authorization certificates -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-certgen.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot;  net.cnri.apps.cmdline.CertGenerator %*"
+      file="${dist}/do-${version}/bin/do-certgen.bat"
+      append="true" level="error" />
+
+    <!-- the utility for generating DO/handle key pairs -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-keygen.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot;  net.cnri.apps.cmdline.KeyGenerator %*"
+      file="${dist}/do-${version}/bin/do-keygen.bat"
+      append="true" level="error" />
+
+    <!-- the script used for testing index functions -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-indextest.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot;  net.cnri.apps.test.IndexTest %*"
+      file="${dist}/do-${version}/bin/do-indextest.bat"
+      append="true" level="error" />
+
+    <!-- the script used for invoking DO operations from the command line -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-invoke.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot; net.cnri.apps.cmdline.Main %*"
+      file="${dist}/do-${version}/bin/do-invoke.bat"
+      append="true" level="error" />
+
+    <!-- the script used for configuring a blank Cordra instance -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/configure-unconfigured-cordra.bat"/>
+    <echo message="java -cp &quot;%CP%&quot; net.cnri.apps.cmdline.ConfigureCordraScript %*"
+      file="${dist}/do-${version}/bin/configure-unconfigured-cordra.bat"
+      append="true" level="error" />
+
+    <!-- the script used for testing multi-repository service functions -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-test-mm.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot; net.cnri.apps.test.TestMM %*"
+      file="${dist}/do-${version}/bin/do-test-mm.bat"
+      append="true" level="error" />
+
+    <!-- the utility GUI for accessing the audit functions of a server -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-audit.bat"/>
+  	<echo message="java -cp &quot;%CP%&quot; net.cnri.apps.auditgui.AuditWindow %*"
+      file="${dist}/do-${version}/bin/do-audit.bat"
+      append="true" level="error" />
+
+    <!-- the front-end program that provides a secure interface to a repository -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-server.bat"/>
+    <echo message="java -Xmx1000000000 -cp &quot;%CP%&quot; net.cnri.apps.doserver.Main %*"
+      file="${dist}/do-${version}/bin/do-server.bat"
+      append="true" level="error" />
+
+    <!-- invokes a jython interpreter with the DO environment preloaded -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-jython.bat"/>
+    <echo message="java -Xmx1000000000 -cp &quot;%CP%&quot; net.cnri.apps.dojython.JythonMain %*"
+      file="${dist}/do-${version}/bin/do-jython.bat"
+      append="true" level="error" />
+
+  	
+    <!-- launcher for any java app that needs the DO environment setup -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-java.bat"/>
+    <echo message="java -cp &quot;%CP%&quot; %*"
+      file="${dist}/do-${version}/bin/do-java.bat"
+      append="true" level="error" />
+  	
+    <!-- invokes the create-user app with the DO environment preloaded -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/do-createuser.bat"/>
+    <echo message="java -cp &quot;%CP%&quot; net.cnri.apps.dogui.controller.CreateNewUser %*"
+      file="${dist}/do-${version}/bin/do-createuser.bat"
+      append="true" level="error" />
+
+    <!-- install a Windows service for the repository -->
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/install-windows-service-32.bat"/>
+    <echo message="%DOHOME%\bin\procrun\prunsrv //US//RepositoryService --DisplayName=&quot;Repository Service&quot; --Description=&quot;CNRI Digital Object Repository&quot; --JvmMx=1G --Classpath=&quot;%CP%&quot; --StartMode=jvm --StartClass=net.cnri.apps.doserver.Main --StartParams=%~f1 --StopMode=jvm --StopClass=net.cnri.apps.doserver.Main --StopMethod=shutdown"
+      file="${dist}/do-${version}/bin/install-windows-service-32.bat"
+      append="true" level="error" />
+    <copy file="scripts/launcher.bat" tofile="${dist}/do-${version}/bin/install-windows-service-64.bat"/>
+    <echo message="%DOHOME%\bin\procrun\amd64\prunsrv //US//RepositoryService --DisplayName=&quot;Repository Service&quot; --Description=&quot;CNRI Digital Object Repository&quot; --JvmMx=1G --Classpath=&quot;%CP%&quot; --StartMode=jvm --StartClass=net.cnri.apps.doserver.Main --StartParams=%~f1 --StopMode=jvm --StopClass=net.cnri.apps.doserver.Main --StopMethod=shutdown"
+      file="${dist}/do-${version}/bin/install-windows-service-64.bat"
+      append="true" level="error" />
+
+    <copy todir="${dist}/do-${version}/bin/procrun">
+      <fileset dir="scripts/procrun" />
+    </copy>
+          
+    <tar tarfile="${dist}/do-${version}.tar">
+     <tarfileset dir="${dist}" mode="755" includes="do-${version}/bin/**" excludes="do-${version}/bin/*.bat"/>
+     <tarfileset dir="${dist}" mode="644" includes="do-${version}/bin/*.bat" />
+     <tarfileset dir="${dist}" mode="644" excludes="do-${version}/bin/**" includes="do-${version}/**"/>
+    </tar>
+    <gzip zipfile="${dist}/do-${version}.tar.gz" src="${dist}/do-${version}.tar"/>
+
+    <zip zipfile="${dist}/do-${version}.zip">
+     <zipfileset dir="${dist}" filemode="755" includes="do-${version}/bin/**" excludes="do-${version}/bin/*.bat"/>
+     <zipfileset dir="${dist}" filemode="644" includes="do-${version}/bin/*.bat" />
+     <zipfileset dir="${dist}" filemode="644" excludes="do-${version}/bin/**" includes="do-${version}/**"/>
+    </zip>
+    
+    <!-- delete dir="${dist}/do-${version}"/ -->
+  	<chmod dir="${dist}/do-${version}/bin" perm="ugo+rx" 
+  	       includes="**"/>
+    <delete file="${dist}/do-${version}.tar"/>
+  </target>
+
+
+
+
+  <!-- The following target is used to build the base server distribution -->
+  <target name="serverdist" depends="clean,jar,serverjar">
+    <mkdir dir="${dist}/do-server-${version}"/>
+    <mkdir dir="${dist}/do-server-${version}/bin"/>
+    <mkdir dir="${dist}/do-server-${version}/lib"/>
+    <mkdir dir="${dist}/do-server-${version}/lib/jetty"/>
+    <mkdir dir="${dist}/do-server-${version}/doc"/>
+
+    <zip zipfile="${dist}/do-server-${version}/src.zip" basedir="${base}"
+         includes="
+             build.xml
+             scripts/launcher
+             scripts/launcher.bat
+             src/net/cnri/dobj/*.java
+             src/net/cnri/dobj/delegation/*.java
+             src/net/cnri/dobj/etc/anon*
+             src/net/cnri/do_api/**
+             src/net/cnri/debug/*.java
+             src/net/cnri/apps/sample/**
+             src/net/cnri/apps/doserver/**
+             src/net/cnri/apps/doserver/txnlog/*.java
+             src/net/cnri/apps/cmdline/*.java
+             src/net/cnri/apps/docertutil/*.java
+             "
+    />
+    
+  	
+    <!-- copy jar files to the distribution's 'lib' directory -->
+    <copy file="${doc}/Protocol Specification.pdf" todir="${dist}/do-server-${version}/doc"/>
+    <!--<copy file="${base}/README.txt" todir="${dist}/do-server-${version}"/>-->
+    <copy file="${doc}/LICENSE.txt" todir="${dist}/do-server-${version}"/>
+    <copy file="${dist}/do.jar" todir="${dist}/do-server-${version}/lib"/>
+    <copy file="${dist}/doserver.jar" todir="${dist}/do-server-${version}/lib"/>
+    <copy file="${lib}/cnriutil.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/je-3.3.98.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/velocity-1.7-dep.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/velocity-tools-2.0.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/jython-2.2.1.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/javax.servlet-api-3.0.1.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/handle.jar" todir="${dist}/do-${version}/lib"/>
+    <!--<copy file="${lib}/repository.jar" todir="${dist}/do-${version}/lib"/>-->
+    <copy file="${lib}/knowbots.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/javax.mail.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/bcprov-jdk15on-151.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/bcpkix-jdk15on-151.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/lucene-core-4.7.2.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/lucene-queryparser-4.7.2.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/lucene-analyzers-common-4.7.2.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/commons-fileupload-1.2.2.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/commons-io-1.3.2.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/slf4j-api-1.7.7.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/jcl-over-slf4j-1.7.7.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/log4j-1.2.17.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/apache-log4j-extras-1.2.17.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/slf4j-log4j12-1.7.7.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/gson-2.3.1.jar" todir="${dist}/do-${version}/lib"/>
+    <copy file="${lib}/commons-codec-1.9.jar" todir="${dist}/do-${version}/lib"/>
+    
+    <copy todir="${dist}/do-${version}/doc/third_party_licenses">
+       <fileset dir="${doc}/third_party_licenses" includes="*"/>
+    </copy>
+        
+    
+    <copy todir="${dist}/do-server-${version}/lib/jetty/">
+      <fileset dir="${lib}/jetty" includes="*.jar" />
+    </copy>
+    
+    <!-- copy scripts to the bin directory that will start the different apps -->
+
+    <!-- the script used to launch the server -->
+    <copy file="scripts/launcher" tofile="${dist}/do-server-${version}/bin/do-server"/>
+    <echo message="exec java -Xmx1000000000 -cp &quot;${CP}&quot; net.cnri.apps.doserver.Main &quot;$@&quot;"
+      file="${dist}/do-server-${version}/bin/do-server"
+      append="true" level="error" />
+
+
+    <tar tarfile="${dist}/do-server-${version}.tar">
+     <tarfileset dir="${dist}" mode="755" includes="do-server-${version}/bin/**"/>
+     <tarfileset dir="${dist}" mode="644" excludes="do-server-${version}/bin/**" includes="do-server-${version}/**"/>
+    </tar>
+    <gzip zipfile="${dist}/do-server-${version}.tar.gz" src="${dist}/do-server-${version}.tar"/>
+    <delete dir="${dist}/do-server-${version}"/>
+    <delete file="${dist}/do-server-${version}.tar"/>
+  </target>
+
+  <path id="apidocclasspath">
+      <fileset dir="${lib}">
+        <include name="*.jar" />
+      </fileset>
+
+      <fileset dir="${lib}/jetty">
+  	    <include name="*.jar" />
+  	  </fileset>
+
+      <fileset dir="../DORepositoryAPI/lib" erroronmissingdir="false">
+        <include name="*.jar" />
+      </fileset>
+  </path>
+
+  
+  <target name="apidoc">
+    <delete dir="${dist}/apidoc"/>
+    <mkdir dir="${dist}/apidoc"/>
+    <javadoc destdir="${dist}/apidoc" author="true" overview="${doc}/doapi_overview.html"
+          access="public" classpathref="apidocclasspath"
+          packagenames="net.cnri.do_api,net.cnri.dobj,net.cnri.repository"
+          additionalparam="-Xdoclint:none -notimestamp"
+       >
+       <doctitle><![CDATA[<h1>Digital Object API</h1>]]></doctitle>
+       <fileset dir="${src}"/>
+       <fileset dir="../DORepositoryAPI/src" erroronmissingdir="false"/>
+    </javadoc>
+    <!-- classpathref="classpath" packagenames="net.cnri.do_api" sourcepath="${src}" -->
+  </target>
+  
+  <target name="api" depends="jar,apidoc">
+    <zip destfile="${dist}/dolib-${clientversion}.zip" >
+      <zipfileset dir="${dist}/apidoc/" prefix="dolib-${clientversion}/apidoc/" />
+      <zipfileset dir="${dist}" prefix="dolib-${clientversion}/lib"
+           includes="do.jar" />
+      <zipfileset dir="${lib}" prefix="dolib-${clientversion}/lib"
+           includes="cnriutil.jar,handle.jar" />
+    </zip>
+
+
+  </target>
+  
+
+</project>
+

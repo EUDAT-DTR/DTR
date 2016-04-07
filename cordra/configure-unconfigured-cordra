@@ -1,0 +1,1 @@
+"`dirname "$0"`"/sw/bin/configure-unconfigured-cordra "`dirname "$0"`"/data

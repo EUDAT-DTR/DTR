@@ -1,0 +1,25 @@
+<html> 
+<style type="text/css">
+body {
+    margin: 0;
+    padding: 0;
+    background: #f0f0ff;
+    color: #000;
+    font: 12px "Lucida Grande", Helvetica, "Arial Unicode MS", "Arial Unicode", Arial, sans-serif;
+    color: #333;
+    text-align: center;
+</style>
+
+<head><title>$repoName</title></head> 
+<body> 
+
+<h3>You are at the repository $repoLink</h3> 
+
+<form action="/show" method="GET">Find any object by Object ID: <input type=text name="id"/></form><br/> 
+Search for objects by keyword:
+<form action="/search" method="POST"> 
+Search terms: <input type=text name="q"/> 
+</form><br/> 
+<a href="/list">Browse all objects</a><br/> 
+
+</body></html>

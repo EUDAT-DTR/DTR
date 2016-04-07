@@ -1,0 +1,67 @@
+Note that the implementation details of Cordra and its build
+instructions are in flux and should be expected to change!
+
+As of Cordra 1.0.5 in November 2015, Cordra is a Java Servlet
+application running in the servlet container provided by a
+DO Repository.
+
+The DO Repository source is in the file "src.zip".  Unzip this file in
+place and everything should be in the correct locations to build the
+repository distribution with "ant bindist".
+
+Another file "cordra-src.zip" contains the source of three other
+projects:
+
+(1) "Registrar", which is Cordra proper.  This project builds into the
+"ROOT.war" file in the Cordra "data/webapps" directory.  In order to
+build, the following jar files will need to be copied from "sw/lib" into
+"Registrar/build-deps":
+
+   apache-log4j-extras-1.2.17.jar
+   cnriutil.jar
+   do.jar
+   doapps.jar
+   gson-2.3.1.jar
+   handle.jar
+   javax.servlet-api-3.0.1.jar
+   jcl-over-slf4j-1.7.7.jar
+   log4j-1.2.17.jar
+   lucene-analyzers-common-4.7.2.jar
+   lucene-core-4.7.2.jar
+   lucene-queryparser-4.7.2.jar
+   slf4j-api-1.7.7.jar
+   slf4j-log4j12-1.7.7.jar
+
+Also "data/webapps/ROOT.war" should be unzipped into the
+"Registrar/WebContent" directory in order to populate
+"Registrar/WebContent/WEB-INF/lib".
+
+To build ROOT.war, run "ant war".
+
+
+(2) "DORepositoryAPI", which builds into the
+"dorepository-api-1.1.jar" used by Cordra.  "DORepositoryAPI/lib" will
+need to be populated with
+
+   android.jar
+   cnriutil.jar
+   commons-codec-1.10.jar
+   do.jar
+   doapps.jar
+   gson-2.3.1.jar
+   handle.jar
+   httpclient-4.3.4.jar
+   httpcore-4.3.2.jar
+   httpmime-4.3.4.jar
+   javax.servlet-api-3.0.1.jar
+   jcl-over-slf4j-1.7.7.jar
+   je-5.0.104.jar
+   mongo-2.10.1.jar
+   slf4j-api-1.7.7.jar
+
+Note however that not all of these are run-time Cordra dependencies.
+"ant" will build the jar file.
+
+
+(3) "RepositoryClient", a Java client to the Cordra API.  Currently it
+is not used by Cordra itself, but is included for reference.

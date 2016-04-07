@@ -1,0 +1,23 @@
+<html>
+<head><title>Error</title></head>
+<body>
+
+ Sorry, there was an error processing you request:
+#if($!message)
+ <pre>
+  $!message
+ </pre>
+#end
+
+#if($!error)
+ <pre>
+  $!error
+ </pre>
+#end
+
+
+</body>
+</html>
+
+
+

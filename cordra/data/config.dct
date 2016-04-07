@@ -1,0 +1,12 @@
+{
+  "serviceid" = "{prefix}/repo"
+  "port" = "9900"
+  "ssl_port" = "0"
+  "http_port" = "8080"
+  "https_port" = "8443"
+  "redirect_stderr" = "yes"
+  "enable_pull_replication" = "no"
+  "serverid" = "1"
+  "log_save_interval" = "Monthly"
+  "log_accesses" = "yes"
+}

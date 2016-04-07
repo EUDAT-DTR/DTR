@@ -1,0 +1,4 @@
+{
+  agent_class = "net.cnri.knowbots.standardops.StandardOperations"
+  service_key = "net.cnri.knowbots.standardops.StandardOperations"
+}

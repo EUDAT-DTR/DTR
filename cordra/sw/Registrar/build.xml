@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<project default="clean" basedir=".">
+    <property name="project" value="registrar"/>
+	<property name="src" value="src"/>
+    <property name="lib" value="WebContent/WEB-INF/lib"/>
+    <property name="build-deps" value="build-deps"/>
+    <property name="web" value="WebContent"/>
+	<property name="build" value="build"/>
+	<property name="dist"  value="dist"/>
+	<property name="target" value="1.6"/>
+	<property name="debug" value="true"/>
+    <property name="encoding" value="utf8"/>
+	
+    <target name="clean">
+	    <!-- Delete the ${build} and ${dist} directory trees -->
+	    <delete includeemptydirs="true" failonerror="false">
+	    	<fileset dir="${build}" includes="**/*"/>
+	    </delete>
+	    <delete includeemptydirs="true" failonerror="false">
+	    	<fileset dir="${dist}" includes="**/*"/>
+	    </delete>
+    </target>
+
+    <target name="init">
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dist}"/>
+        <mkdir dir="${build}/classes"/>
+        <mkdir dir="${build}/registrar-index-builder"/>
+    </target>
+
+     <!-- registrar indexer -->
+    <target name="indexer" depends="init,compile">
+        <jar destfile="${dist}/registrar-index-builder.jar">
+            <fileset dir="${build}/classes"/>
+        </jar>
+    </target>
+
+    <target name="compile">
+        <javac encoding="${encoding}" debug="${debug}"
+               source="${target}" target="${target}"
+               destdir="${build}/classes"
+               srcdir="${src}" includes="**">
+            <classpath>
+                <fileset erroronmissingdir="false" dir="${lib}" includes="**"/>
+                <fileset dir="${build-deps}" includes="**"/>
+            </classpath>
+        </javac>
+        <!-- resources -->
+        <copy todir="${build}/classes">
+            <fileset dir="${src}" excludes="**/*.java" />
+        </copy>
+    </target>
+
+    <target name="war" depends="init,compile">
+        <copy todir="${dist}/${project}">
+            <fileset dir="${web}" includes="**"/>
+        </copy>
+        <mkdir dir="${dist}/${project}/WEB-INF"/>
+        <mkdir dir="${dist}/${project}/WEB-INF/classes"/>
+        <mkdir dir="${dist}/${project}/WEB-INF/lib"/>
+        <copy todir="${dist}/${project}/WEB-INF/classes">
+            <fileset dir="${build}/classes" includes="**"/>
+        </copy>
+        <copy failonerror="false" todir="${dist}/${project}/WEB-INF/lib">
+            <fileset dir="${lib}" includes="**"/>
+        </copy>
+        <jar destfile="${dist}/${project}.war">
+            <fileset dir="${dist}/${project}"/>
+        </jar>
+    </target>
+	
+</project>

@@ -1,0 +1,13 @@
+
+A new DO Identity has been created and assigned this email address.  
+You can claim this identity by visiting this URL:
+  $!signin_link
+and logging in using your newly generated name and password:
+  name: $!user_id
+  password: $!initial_password
+
+You should change your password upon logging into the system.
+
+Sincerely,
+$!repo_id
+

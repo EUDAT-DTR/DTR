@@ -1,0 +1,30 @@
+{
+  "title": "Document Repository",
+  "relationshipsButtonText": "Show Relationships",
+  "allowUserToSpecifySuffixOnCreate": true,
+  "searchResults": {
+    "includeType": true,
+    "includeModifiedDate": false,
+    "includeCreatedDate": false
+  },
+  "initialQuery": "*:*",
+  "initialFragment": "urls/intro.html",
+  "initialSortFields": "/name",
+  "navBarLinks": [
+    {
+      "type": "url",
+      "title": "Introduction",
+      "url": "intro.html"
+    },
+    {
+      "type": "query",
+      "title": "All",
+      "query": "*:*",
+      "sortFields": "/name"
+    },
+    {
+      "type": "typeDropdown",
+      "title": "Types"
+    }
+  ]
+}

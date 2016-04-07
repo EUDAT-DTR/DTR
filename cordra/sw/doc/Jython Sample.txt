@@ -1,0 +1,80 @@
+from net.cnri.do_api import *
+from net.cnri.dobj import *
+from java.io import *
+import sys
+import jarray
+
+# Get a reference to the repository where we will create/get objects
+repo = Repository(auth, 'cnri.test.sean/nrep2')
+
+# To create a digital object, uncomment the following
+# booga = repo.createDigitalObject('cnri.test.sean/booga-booga')
+
+
+# Get a reference to a digital object in that repository
+sean = repo.getDigitalObject('cnri.test.sreilly/sreilly')
+
+# Get a list of object attributes
+for attName in sean.listAttributes():
+  print "  %s -> %s"%(attName, sean.getAttribute(attName, ''))
+
+
+# List the elements
+elementIdx = 0
+for elementName in sean.listDataElements():
+  print "element name: %s"%(elementName)
+  element = sean.getDataElement(elementName)
+  
+  # print the attributes for this element
+  for attName in element.listAttributes():
+    print "    %s -> %s"%(attName, element.getAttribute(attName, ''))
+  
+  # read the contents of the element
+  input = element.read()
+  outfile = FileOutputStream("data_element_file-%d"%(elementIdx))
+  elementIdx = elementIdx + 1
+  array = jarray.zeros(1024, 'b')
+  while 1:
+    numRead = input.read(array)
+    if numRead < 0:
+      break
+    outfile.write(array, 0, numRead)
+  outfile.close()
+
+
+# Create a new element
+print "Writing a data element"
+newElement = sean.getDataElement("newtestelement")
+fileInput = FileInputStream("/etc/passwd")
+newElement.write(fileInput)
+fileInput.close()
+newElement.setAttribute("mimetype", "text/plain")
+
+
+
+# Get a reference to the index object and perform a query
+idxRepo = Repository(auth, 'cnri.test.sean/nidx1')
+idxObj = idxRepo.getDigitalObject('cnri.test.sean/nidx1')
+
+searchTerms = "platypus"
+print "performing search for '%s'"%(searchTerms)
+
+# we put the search terms into the "query" parameter
+params = HeaderSet()
+params.addHeader("query", searchTerms)
+io = idxObj.performOperation("1037/search", params)
+io.getOutputStream().close()
+
+searchResult = HeaderSet()
+while searchResult.readHeaders(io.getInputStream()):
+  resultObjID = searchResult.getStringHeader("objectid", "<none>")
+  resultRepoID = searchResult.getStringHeader("repoid", "<none>")
+  print "Object ID: %s on repository %s"%(resultObjID, resultRepoID)
+  # there's a bunch more info returned for each result in search results
+  # uncomment the next line to see them
+  #print searchResult
+
+io.close()
+  
+sys.exit(0)
+

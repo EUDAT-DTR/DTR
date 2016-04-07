@@ -1,0 +1,26 @@
+<!--
+#*
+Available variables:
+repoID - the ID of your repository object
+objectLinks - array containing Strings which are Object ID's hyperlinked to their respective objects
+
+Please see Apache VTL (Velocity Template Language) documentation for more details
+*#
+Powered by Apache Velocity
+-->
+
+
+<html>
+<head>
+<title>List of objects in $repoID</title>
+</head>
+<body>
+<a href="#" onClick="history.go(-1);return false;">Go Back</a>
+
+<h1>List of Objects</h1>
+#foreach ($objectLink in $objectLinks)
+	$objectLink <br  />
+#end
+
+</body>
+</html>

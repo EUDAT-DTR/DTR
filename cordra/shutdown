@@ -1,0 +1,1 @@
+rm "`dirname "$0"`"/data/delete_this_to_stop_server

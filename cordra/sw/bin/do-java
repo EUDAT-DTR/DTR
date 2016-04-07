@@ -1,0 +1,39 @@
+#!/bin/sh
+
+PRG=$0
+#progname=`basename $0`
+
+# Resolve symlinks. See 4152645.
+while [ -L "$PRG" ]; do
+    ls=`/bin/ls -ld "$PRG"`
+    link=`/usr/bin/expr "$ls" : '.*-> \(.*\)$'`
+    if /usr/bin/expr "$link" : '/' > /dev/null; then
+	PRG="$link"
+    else
+	PRG="`/usr/bin/dirname $PRG`/$link"
+    fi
+done
+
+#unset JAVA_HOME
+unset CLASSPATH
+
+# Get the full name of the directory where the Knowbot system is installed
+DOHOME=`dirname "$PRG"`
+DOHOME="${DOHOME}/../"
+#echo "DOHOME is $DOHOME"
+
+unset CP
+# Load all of the .jar files in the lib directory into the classpath
+for jarfile in "${DOHOME}lib"/*.jar ; do
+  CP=${CP+${CP}:}${jarfile}
+done
+for jarfile in "${DOHOME}lib"/*/*.jar ; do
+  CP=${CP+${CP}:}:${jarfile}
+done
+CP=${CP-.}
+
+# the last line of this script is added by the build process
+# To developers:  make sure there is at least one blank line after
+# this line
+
+exec java -cp "${CP}" $@ 
