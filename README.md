@@ -1,3 +1,3 @@
 # DTR
 
-EUDAT's Data Type Registry
+Data Type Registry software for the EUDAT project's CDI services
