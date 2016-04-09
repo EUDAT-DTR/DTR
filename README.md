@@ -14,7 +14,7 @@ Additionally, EUDAT-DTR needs appropriate credentials to access the Handle Syste
 ##Installation and configuration
 In order to install the latest version of the EUDAT-DTR service, clone a copy of the main EUDAT-DTR Git repository and enter the root directory of the cloned repository:
 
-```{r, engine='bash', count_lines}
+```console
 git clone -b master https://github.com/EUDAT-DTR/DTR.git && cd DTR
 ```
 
@@ -28,7 +28,7 @@ For the automatic configuration process, you will need to the following:
 For this example, we will assume that the handle prefix allotted to the community is `12345` and that the private key is contained in the `$HOME/12345_privkey.bin` file.
 
 Once you have this information, enter the `cordra` directory and run the `configure-unconfigured-cordra` script
-```{r, engine='bash', count_lines}
+```console
 cd cordra
 ./configure-unconfigured-cordra
 ```
@@ -36,7 +36,7 @@ cd cordra
 The script will now ask for you to enter a `repository handle` name that will be used to create a special handle **in the handle server** that will contain relevant information about EUDAT-DTR (e.g. its access credentials). In our example, we have instructed the script to create the `12345/eudat_dtr` handle:
 
 
-```{r, engine='bash', count_lines}
+```console
 [ user@hostname: ~/DTR/cordra/ ] $ ./configure-unconfigured-cordra
 Your Cordra instance will need to be identified by a handle, its 'repository handle'.
 This handle needs to be a handle you control, that is, under a prefix allotted to you.
@@ -48,7 +48,7 @@ Enter the repository handle you want to create: 12345/eudat_dtr
 
 After that, the script will ask you for the identity of your handle server administrator. Typically it will be something similar to `300:0.NA/12345`, which is what we have used for this example:
 
-```{r, engine='bash', count_lines}
+```console
 [ user@hostname: ~/DTR/cordra/ ] $ ./configure-unconfigured-cordra
 Your Cordra instance will need to be identified by a handle, its 'repository handle'.
 This handle needs to be a handle you control, that is, under a prefix allotted to you.
@@ -62,7 +62,7 @@ Enter identity of your handle server administrator (e.g. 300:0.NA/12345): 300:0.
 
 Now the script will ask for the fully-qualified path to the private key of your handle server administrator, and its passphrase if needed. For the example we are using the private key contained in `$HOME/12345_privkey.bin`, which requires the passphrase `somekey`.
 
-```{r, engine='bash', count_lines}
+```console
 [ user@hostname: ~/DTR/cordra/ ] $ ./configure-unconfigured-cordra
 Your Cordra instance will need to be identified by a handle, its 'repository handle'.
 This handle needs to be a handle you control, that is, under a prefix allotted to you.
@@ -90,20 +90,20 @@ If the information provided is correct, the script will create all the required 
 
 Clone the repository
 
-```
+```console
 git clone -b master https://github.com/EUDAT-DTR/DTR.git
 cd DTR
 ```
 
 Run the `autogen.sh` script located in the scripts folder to copy all the DTR development dependencies to their appropriate locations
 
-```
+```console
 scripts/autogen.sh
 ```
 
 Once the unpacking of dependencies is complete, navigate to the `eudat-dtr` directory and build the software
 
-```
+```console
 cd cordra/sw/eudat-dtr/
 ant war
 ```
