@@ -73,7 +73,7 @@ Enter the repository handle you want to create: 12345/eudat_dtr
 
 Enter identity of your handle server administrator (e.g. 300:0.NA/12345): 300:0.NA/12345
 
-Enter the fully qualified path to the private key of your handle server administrator: ~/12345_pdrivkey.bin
+Enter the fully qualified path to the private key of your handle server administrator: ~/12345_privkey.bin
 
 Enter the passphrase of that private key, if needed (press return if no passphrase): somekey
 ```
