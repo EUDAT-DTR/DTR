@@ -88,22 +88,35 @@ If the information provided is correct, the script will create all the required 
 
 ##Setting up a development environment
 
-Clone the repository
+Clone the repository:
 
 ```console
 git clone -b master https://github.com/EUDAT-DTR/DTR.git
 cd DTR
 ```
 
-Run the `autogen.sh` script located in the scripts folder to copy all the DTR development dependencies to their appropriate locations
+Run the `autogen.sh` script located in the scripts folder to copy all the DTR development dependencies to their appropriate locations:
 
 ```console
 scripts/autogen.sh
 ```
 
-Once the unpacking of dependencies is complete, navigate to the `eudat-dtr` directory and build the software
+Once the unpacking of dependencies is complete, navigate to the `eudat-dtr` directory and build the software:
 
 ```console
 cd cordra/sw/eudat-dtr/
 ant war
+```
+
+After the build process completes, copy the newly generated `registrar.war` found in `DTR/cordra/sw/eudat-dtr/dist` to `DTR/cordra/data/webapps-priority` making sure to replace the existing `ROOT.war` package:
+
+```console
+cd ../../
+cp sw/eudat-dtr/dist/registrar.war data/webapps-priority/ROOT.war
+```
+
+Now the service can be started as usual, as long as the development instance has been configured as explained above:
+
+```console
+./startup
 ```
