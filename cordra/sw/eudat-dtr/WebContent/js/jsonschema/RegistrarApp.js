@@ -72,7 +72,7 @@ function RegistrarApp() {
         subscriptionBanner = new SubscriptionBanner($("#subscriptionBanner"), serverPrefix);
         
         
-        $('.navbar-brand').text(uiConfig.title);
+        //$('.navbar-brand').text(uiConfig.title);
         $('title').text(uiConfig.title);
         
         var navBarElement = $("#navBar");

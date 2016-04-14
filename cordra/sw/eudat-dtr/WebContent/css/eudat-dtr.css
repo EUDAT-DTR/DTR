@@ -1,0 +1,105 @@
+.about-header{
+/*    font-size: 13px;*/
+}
+
+.text-color-white {
+  color: #fff;
+}
+
+.text-color-white a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.text-color-white a:hover {
+  color: #fff;
+  /*text-decoration: none;*/
+}
+
+.navbar-brand .dtr-logo{
+    height: 128px;
+    width: 232px;
+}
+
+.navbar-brand .eudat-logo{
+    height: 48px;
+}
+
+
+/* default settings */
+h1, h2, h3 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.bg-color-orange {
+  background-color: #E5601E;
+}
+
+.color-primary{
+  color: #E5601E;
+}
+
+.open .color-primary{
+  color: white;
+}
+
+.text-color-white {
+  color: #fff;
+}
+
+.text-color-white a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.text-color-white a:hover {
+  color: #fff;
+  /*text-decoration: none;*/
+}
+.align-right{
+  text-align: right;
+}
+.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
+}
+.no-radius {
+  border-radius: 0px;
+}
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
+  color: #ffffff;
+}
+
+
+.header-top{
+    background: #e5601e;
+    padding:5px 0
+}
+
+.header{
+    background: url("/img/img_header.png") top right no-repeat #ffffff;
+    padding: 1% 0;
+}
+
+.searchbar {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background-color: #f6f6f6;
+  margin-bottom: 20px;
+  padding-bottom : 8px; /* from old style */
+}
+
+.search-bar {
+    margin: 20px 0;
+}
+

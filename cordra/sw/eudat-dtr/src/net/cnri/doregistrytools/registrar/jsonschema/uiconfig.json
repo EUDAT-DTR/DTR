@@ -1,5 +1,5 @@
 {
-  "title": "Document Repository",
+  "title": "EUDAT-DTR (beta)",
   "relationshipsButtonText": "Show Relationships",
   "allowUserToSpecifySuffixOnCreate": true,
   "searchResults": {
@@ -13,7 +13,22 @@
   "navBarLinks": [
     {
       "type": "url",
-      "title": "Introduction",
+      "title": "WHAT IS EUDAT-DTR",
+      "url": "intro.html"
+    },
+    {
+      "type": "url",
+      "title": "USER GUIDE",
+      "url": "intro.html"
+    },
+    {
+      "type": "url",
+      "title": "FAQS",
+      "url": "intro.html"
+    },
+    {
+      "type": "url",
+      "title": "CONTACT",
       "url": "intro.html"
     },
     {
