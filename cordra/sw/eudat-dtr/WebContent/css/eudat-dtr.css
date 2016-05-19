@@ -76,6 +76,13 @@ h1, h2, h3 {
     margin: 0 auto;
 }
 
+.btn-primary {
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #428bca;
+    border-color: #357ebd;
+}
+
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
   color: #ffffff;
 }
@@ -91,15 +98,45 @@ h1, h2, h3 {
     padding: 1% 0;
 }
 
-.searchbar {
+
+/**** new searchbar */
+
+.dtr-search-bar-container {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   background-color: #f6f6f6;
   margin-bottom: 20px;
-  padding-bottom : 8px; /* from old style */
+/*  padding-bottom : 8px; from old style */
+  min-width: 100%;
 }
 
-.search-bar {
+#dtr-search-box .navbar {
     margin: 20px 0;
 }
 
+#dtr-search-form-input-group {
+    padding: 8px 0;
+}
+
+/*
+  to keep searchbar with buttons in one line
+*/
+@media (min-width: 768px) { /* ld size */
+  #dtr-search-form-input-group {
+    width: 670px;
+  }
+}
+
+@media (min-width: 992px) { /* md size */
+  #dtr-search-form-input-group {
+    width: 710px;
+  }
+}
+
+@media (min-width: 1200px) { /* ld size */
+  #dtr-search-form-input-group {
+    width: 915px;
+  }
+}
+
+/**** end */

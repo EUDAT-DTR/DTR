@@ -29,18 +29,69 @@ function SearchWidget(containerDiv, schemas, serverPrefix, allowCreate) {
             
         }
         
-        var searchBarDiv = $('<div class="row search-bar"></div>');
+        var searchBarDiv = $('<div class="container"></div>');
         containerDiv.append(searchBarDiv);
-        
+
+        var searchBox = $('<div id="dtr-search-box" class="row"></div>');
+        searchBarDiv.append(searchBox);
+
+        var column = $('<div class="col-sm-12"></div>');
+        searchBox.append(column);
+
+        var navBar = $('<div class="navbar navbar-default"></div>');
+        column.append(navBar);
+
         var form = $('<form class="form-inline" role="form"></form>');
-        searchBarDiv.append(form);
+        navBar.append(form);
         form.submit(function(e) {return false;});
-        
-        var column = $('<div class="col-md-8 col-md-offset-2"/>');
+
+        var column = $('<div class="nav navbar-nav navbar-left navbar-form"></div>');
         form.append(column);
-        
-        var searchInputGroup = $('<div class="input-group"></div>');
+
+        var searchInputGroup = $('<div class="input-group" id="dtr-search-form-input-group"></div>');
         column.append(searchInputGroup);
+
+        /* help tips button */
+        var helpTips = $('\
+                <span class="input-group-btn" style="width: 1%"> \
+                  <a class="dropdown-toggle btn btn-default" rel="tooltip" title="" data-placement="bottom" data-delay="100" data-toggle="dropdown" role="button" href="#" data-original-title="Search Tips and Examples"> \
+                    <i class="glyphicon glyphicon-question-sign"></i> \
+                  </a> \
+                  <ul class="searchexamples dropdown-menu"> \
+                    <li> \
+                      <a href="/help/search-tips"> \
+                        <strong>Search Tips</strong> \
+                        <i class="pull-right glyphicon glyphicon-info-sign"></i> \
+                      </a> \
+                    </li> \
+                    <li> \
+                      <a href="/help/search-guide"> \
+                        <i class="pull-right glyphicon glyphicon-leaf"></i> \
+                        <strong>Search Guide</strong> \
+                      </a> \
+                    </li> \
+                  </ul> \
+                </span>');
+
+        searchInputGroup.append(helpTips);
+
+        /* additional buttons for search bar (should use 'width: 1%' if enabled) */
+        // var stuff = $('\
+        //           <input autocomplete="off" data-items="4" name="p" class="form-control" type="text" tabindex="1" placeholder="Search 359 records for" value=""><span class="input-group-btn invenio-collapsable-tabs" data-toggle="buttons"> \
+        //             <a href="#" class="btn btn-default right-not-rounded left-not-rounded" data-toggle="collapse" data-target="#navbar-bottom"> \
+        //               <i class="glyphicon glyphicon-plus"></i> \
+        //               <b class="caret"></b> \
+        //             </a> \
+        //             <a href="#" class="btn btn-default right-not-rounded left-not-rounded" data-toggle="collapse" data-target="#navbar-bottom2"> \
+        //               <i class="glyphicon glyphicon-cog"></i> \
+        //               <b class="caret"></b> \
+        //             </a> \
+        //           </span><span class="input-group-btn"> \
+        //             <button name="action_search" type="submit" class="btn btn-primary btn-inline-icon-hide-sm"> \
+        //               <i class="glyphicon glyphicon-search"></i><span>&nbsp;Search</span> \
+        //             </button> \
+        //           </span>');
+        //searchInputGroup.append(stuff);
 
         searchInput = $('<input type="text" class="form-control" placeholder="Search">');
         searchInputGroup.append(searchInput);
@@ -54,7 +105,10 @@ function SearchWidget(containerDiv, schemas, serverPrefix, allowCreate) {
         var buttonSpan = $('<span class="input-group-btn" style="width:1%"></span>');
         searchInputGroup.append(buttonSpan);
 
-        var searchButton = $('<button class="btn btn-default cnri-search-button" type="button">Search</button>');
+        var searchButton = $('<button class="btn btn-primary cnri-search-button" type="button">\
+                                <i class="glyphicon glyphicon-search"></i>\
+                                <span>&nbsp;Search</span>\
+                              </button>');
         buttonSpan.append(searchButton);
         searchButton.click(onSearchButtonClick);
 
@@ -138,7 +192,7 @@ function SearchWidget(containerDiv, schemas, serverPrefix, allowCreate) {
     self.setAllowCreate = setAllowCreate;
     
     function buildSingleCreateButton(form, type) {
-        var createButton = $('<button class="btn btn-default cnri-create-button"></button>');
+        var createButton = $('<button class="btn btn-danger cnri-create-button"></button>');
         createButton.data("type", type);
         if (type) {
             createButton.text("Create " + type);
@@ -161,7 +215,7 @@ function SearchWidget(containerDiv, schemas, serverPrefix, allowCreate) {
         var dropdownDiv = $('<div class="dropdown" style="display:inline-block;vertical-align:top"></div>');
         form.append(dropdownDiv);
         
-        var dropdownButton = $('<button class="btn btn-default dropdown-toggle cnri-create-button" type="button" id="dropdownMenu1" data-toggle="dropdown">Create <span class="caret"></span></button>');
+        var dropdownButton = $('<button class="btn btn-danger dropdown-toggle cnri-create-button" type="button" id="dropdownMenu1" data-toggle="dropdown">Create <span class="caret"></span></button>');
         dropdownDiv.append(dropdownButton);
         
         var createList = $('<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1"></ul>');
