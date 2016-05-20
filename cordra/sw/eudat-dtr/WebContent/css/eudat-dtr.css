@@ -135,7 +135,7 @@ h1, h2, h3 {
 }
 
 /*
-  to keep searchbar with buttons in one line
+  to keep the searchbar with buttons in one line
 */
 @media (min-width: 768px) { /* ld size */
   #dtr-search-form-input-group {
@@ -156,3 +156,11 @@ h1, h2, h3 {
 }
 
 /**** end */
+
+/* footer */
+#dtr-footer {
+    background: #f7f3e9 url("/img/color-line.jpg") repeat-x top left;
+    padding: 20px 10px 10px 10px; 
+    font-size: 12px;
+    margin-top: 30px;
+}
