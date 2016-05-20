@@ -1,3 +1,10 @@
+body {
+    min-height: 1500px;
+    /* background-image: url("/img/bg_page.png"); */
+    background-color: #fff;
+    /* background-repeat: no-repeat; */
+}
+
 .about-header{
 /*    font-size: 13px;*/
 }
@@ -96,6 +103,15 @@ h1, h2, h3 {
 .header{
     background: url("/img/img_header.png") top right no-repeat #ffffff;
     padding: 1% 0;
+}
+
+/* bg */
+#dtr-mainpage {
+    background: url("/img/bg_page.png") no-repeat center;
+    position: relative;
+    /* padding-bottom: 94px; disabled ATM */
+    min-height: 700px;
+    margin-top: 40px;
 }
 
 

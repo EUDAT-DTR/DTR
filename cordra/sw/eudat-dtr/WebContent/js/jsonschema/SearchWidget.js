@@ -10,7 +10,7 @@
 
 var window = window || self;
 
-function SearchWidget(containerDiv, schemas, serverPrefix, allowCreate) {
+function SearchWidget(containerDiv, resultsContainerDiv, schemas, serverPrefix, allowCreate) {
     var self = this;
     var searchInput = null;
     var paginationDiv = null;
@@ -128,7 +128,8 @@ function SearchWidget(containerDiv, schemas, serverPrefix, allowCreate) {
         }
         
         resultsContainer = $('<div class="row well" style="display:none"><div/>');
-        containerDiv.append(resultsContainer);
+        //containerDiv.append(resultsContainer);
+        resultsContainerDiv.append(resultsContainer);
         
         var paginationContainerDiv = $('<div/>');
         resultsContainer.append(paginationContainerDiv);

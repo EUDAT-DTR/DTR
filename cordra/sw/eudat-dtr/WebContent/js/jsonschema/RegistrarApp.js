@@ -24,6 +24,7 @@ function RegistrarApp() {
     var toolBarDiv = null;
     var editorDiv = null;
     var searchDiv = null;
+    var searchResultsDiv = null;
     var notificationsDiv = null;
     var relationshipsGraphDiv = null;
     var htmlContentDiv = null;
@@ -48,6 +49,7 @@ function RegistrarApp() {
     function constructor() {
         editorDiv = $('#editor');
         searchDiv = $("#search");
+        searchResultsDiv = $("#search-results");
         notificationsDiv = $("#notifications");
         relationshipsGraphDiv = $("#relationships");
         htmlContentDiv = $("#htmlContent");
@@ -80,7 +82,7 @@ function RegistrarApp() {
         
         notifications = new Notifications(notificationsDiv);
         self.notifications = notifications;
-        searchWidget = new SearchWidget(searchDiv, schemas, serverPrefix, false);
+        searchWidget = new SearchWidget(searchDiv, searchResultsDiv, schemas, serverPrefix, false);
 
         authWidget = new AuthenticatorWidget($("#authenticateDiv"), onAuthenticationStateChange, response.isActiveSession, response.username, response.userId);
         onAuthenticationStateChange();
