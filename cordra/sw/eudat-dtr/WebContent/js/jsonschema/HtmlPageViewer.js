@@ -15,9 +15,9 @@ function HtmlPageViewer(containerDiv, options) {
     
     function constructor() {
         containerDiv.empty();
-        var closeButton = $('<button class="btn btn-sm btn-default pull-right"><span class="glyphicon glyphicon-remove"></span></button>');
-        containerDiv.append(closeButton);
-        closeButton.click(onCloseClick);
+        //var closeButton = $('<button class="btn btn-sm btn-default pull-right"><span class="glyphicon glyphicon-remove"></span></button>');
+        //containerDiv.append(closeButton);
+        //closeButton.click(onCloseClick);
         var contentUrl = "";
         if (options.type == "document") {
             contentUrl = "design?elementName=" + elementName;
@@ -41,7 +41,7 @@ function HtmlPageViewer(containerDiv, options) {
     }
     
     function onCloseClick() {
-        APP.hideHtmlContent();
+        //APP.hideHtmlContent();
     }
     
     constructor();

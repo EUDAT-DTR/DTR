@@ -1,26 +1,4 @@
-div, body, input, textarea, button, #testimonials h4, .highlighted-text {
-  font-family: Raleway;
-  font-style: normal;
-  font-weight: 500;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: Raleway;
-  font-style: normal;
-  font-weight: 500;
-/*  text-transform: uppercase; */
-}
-
-/*@font-face {
-  font-family: 'Raleway';
-  src: url(../bower_components/raleway/fonts/medium/raleway-medium.eot);
-  src: url(../bower_components/raleway/fonts/medium/raleway-medium.eot#iefix) format('embedded-opentype'),
-       url(../bower_components/raleway/fonts/medium/raleway-medium.woff) format('woff'),
-       url(../bower_components/raleway/fonts/medium/raleway-medium.ttf)  format('truetype'),
-       url(../bower_components/raleway/fonts/medium/raleway-medium.svg#Raleway) format('svg');
-}
-*/
-
+/* define the font-family and where to find it */
 @font-face {
   font-family: 'Raleway';
   font-style: normal;
@@ -48,3 +26,40 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   src: local('Raleway Bold'), local('Raleway-Bold'), url(/fonts/Raleway_bold.woff2) format('woff2'), url(/fonts/Raleway_bold.woff) format('woff');
 }
+
+div, body, input, textarea, button, #testimonials h4, .highlighted-text {
+  font-family: 'Raleway';
+  color: #333;
+  font-style: normal;
+  font-weight: 500;
+}
+
+body {
+  font-size: 14px;
+  line-height: 1.42857143;
+}
+
+
+h1 {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 36px;
+}
+
+h2 {
+    font-size: 30px;
+}
+
+h2, h3, h4, h5, h6 {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 500;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  line-height: 1.1;
+}
+

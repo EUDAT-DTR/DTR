@@ -1,137 +1,94 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-<!--
-/*************************************************************************\
-    Copyright (c) 2015 Corporation for National Research Initiatives;
-                        All rights reserved.
-     The CNRI open source license for this software is available at
-                  http://hdl.handle.net/20.1000/106
-\*************************************************************************/
--->
-    <TITLE></TITLE>
-    <STYLE TYPE="text/css">
-    body {
-        background-image: url(../images/banner-background4.jpg);
-        margin: 0px;
-        font-family: Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;font-size:13px;line-height:20px;
-    }
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
 
-    .backBannerImage {
-    background-image: url(../images/final-test-background.jpg);
-    }
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap-custom.css">
+  <link rel="stylesheet" type="text/css" href="css/eudat-dtr.css">
+  <link rel="stylesheet" type="text/css" href="css/font.css">
+</head>
 
-    .topBannerImage {
-    background-image: url(../images/final-top-background.jpg);
-    }
+<body style="height: 550px">
 
-    /* Link Styles */
+<!-- it might be better to use bootstrap's jumbotron -->
+<div class="container jumbotron-container">
+    
+    <div class="row">
+      <div class="col-md-7">
 
-    a {
-        color: #206c79;
-        font-weight:normal;
-        text-decoration:underline;
-        }
+        <h1 class="jumbotron-title">Construct and share your<br/>research data descriptions</h1>
+        <p class="jumbotron-lead">Allow others to understand
+        and reuse your research by describing it in persistent,
+        easily shareable records that can be read by humans and machines alike!</p>
+        <!--        records readable both by humans and machines!</p>-->
 
-    a:hover {
-        color: #436c71;
-        }
+      </div>
 
-    a:visited {
-        color: #689ea7;
-        }
+      <div class="col-md-5" style="text-align:center">
 
-    /* Text Styles */
+            <div class="login">
+<!--                <h3 class="login-title">Login or <a href="#">Sign up</a></h3> -->
 
-    p {
-        font-family: Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;font-size:13px;line-height:20px;
-        color: #333333;
-        padding-left: 80px;
-        padding-right: 80px;
-    }
 
-    ul {
-        font-family: Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;font-size:13px;line-height:20px;
-        color: #333333;
-        padding-left: 120px;
-        padding-right: 80px;
-    }
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12">	
+                        <form class="login-form" action="" autocomplete="off" method="POST">
+                            <div class="input-group login-form-input-group">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-user"></i>
+                                </span>
+                                <input type="text" class="form-control" name="username" placeholder="username">
+                            </div>
+                                                
+                            <div class="input-group login-form-input-group">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-lock"></i>
+                                </span>
+                                <input type="password" class="form-control" name="password" placeholder="password">
+                            </div>
+                            <button class="btn btn-lg btn-primary btn-block login-form-button" type="submit">Sign in</button>
+                        </form>
+                    </div>
+                </div>
 
-    ul.noIndent {
-        font-family: Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;font-size:13px;line-height:20px;
-        color: #333333;
-        padding-left: 40px;
-    }
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-sm-offset-0">
+                        <label class="checkbox">
+                            <input type="checkbox" value="remember-me">Remember me</label>
+                    </div>
+                    <div class="col-xs-12 col-sm-6" style="/*border: 1px solid green*/">
+                        <p class="login-forgot-password">
+                            <a href="#">Forgot password?</a>
+                        </p>
+                    </div>
+                </div>
 
-    ol {
-        font-family: Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;font-size:13px;line-height:20px;
-        color: #333333;
-        padding-left: 120px;
-        padding-right: 80px;
-    }
+                <div class="login-b2access">
 
-    .indent {
-        padding-left: 80px;
-    }
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12">
+                            <hr class="login-b2access-rule">
+                            <span class="login-b2access-span-or">or</span>
+                        </div>
+                    </div>
 
-    p.listIndent {
-        font-family: Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;font-size:13px;line-height:20px;
-        color: #333333;
-        padding-left: 160px;
-        padding-right: 80px;
-    }
 
-    .indentedHeader {
-        font-family: Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;font-size:20px;line-height:20px;
-        color: #42352f;
-        padding-left: 80px;
-        padding-right: 80px;
-    }
+                    <div class="row">
 
-    .indentedHeader2 {
-        font-family: Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;font-size:16px;line-height:18px;
-        color: #42352f;
-        padding-left: 80px;
-        padding-right: 80px;
-    }
+                        <div class="col-xs-12 col-sm-12">
+                            <a href="#" class="btn btn-lg btn-block login-b2access-button ">
+                                <span class="hidden-xs">Sign in with B2ACCESS</span>
+                            </a>
+                        </div>
+                    </div>
 
-    .bodyTextsmall {
-        font-family: Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;
-        font-size: 11px;
-        font-style: normal;
-        font-weight: normal;
-        color: #333333;
-        line-height: 16px;
-    }
-    </STYLE>
-</HEAD>
-<BODY LANG="en-US" TEXT="#000000" LINK="#0000ff" DIR="LTR">
-<P class="indentedHeader">A few things to note before you get started...</P>
-<P class="indentedHeader">Administration</P>
-<p>You can administer the repository by accessing http://localhost:8080/admin.html. By default, you can administer the repository using username 'admin' and password 'changeit'. To change these defaults edit the file repository/data/password.dct and restart the repository.</P>
-<P>The administration page allows you to configure metadata schemas, declare authentication and access control policies, enable federation, etc.</P>
-<P>You can add users and groups using the main repository page (link below). Authenticate as admin and create user and group records as needed.</P>
-<P>By default the repository is configured to store documents and associate metadata with those documents.</P>
-<P>You have been temporarily allotted a Handle prefix <span id="prefix"></span> that will be used by the repository to allot persistent identifiers to registered digital objects.</P>
-<P class="indentedHeader">Repository Access</P>
-<P>You and other users can access the repository at http://localhost:8080/ or using <a target="_blank" href="http://hdl.handle.net/4263537/5045">DOIP</a> at port 9900. Depending on the access controls set in the administration page, you and other users may need to authenticate prior to searching, retrieving, or registering any data or metadata.</P>
-<P>By default, only authenticated users can register data or metadata. And all users can search, view, and retrieve registered data and metadata.</P>
-<P class="indentedHeader">Web Interface Tips</P>
-<P>You can authenticate by clicking on the top-right button named "Sign in".</P>
-<P>You can search by typing keywords in the text box at the top-center and clicking the "Search" button.</P>
-<P>You can click on "All" menu item on the top-left to view all records in the registered system. When first instantiated, the repository has no records to display.</P>
-<P><BR><BR>
-</P>
-    <script src="jquery/jquery-1.10.2.js"></script>
-    <script>
-    $(document).ready(function () {   
-        $.getJSON('design').done(function (design) {
-            $("#prefix").text(design.serverPrefix);
-        }).fail(function (response) {
-            
-        })
-    });
-    </script>
-</BODY>
-</HTML>
+                </div>
+
+            </div> <!-- dtr_login -->
+        </div> <!-- md4 -->
+    </div> <!-- row -->
+</div><!-- container -->
+</body>
+</html>
