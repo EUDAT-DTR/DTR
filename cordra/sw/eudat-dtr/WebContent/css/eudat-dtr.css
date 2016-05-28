@@ -199,10 +199,15 @@ h1, h2, h3 {
 */
 
 /* module container */
+.modal-body-login {
+    padding: 15px 0 15px 0;
+}
+
 .login {
     /*margin-top: -60px;*/
-    display: inline-block;
+    /*display: inline-block;*/
     width: 75%;
+    margin: 0 auto;
 }
 
 .login-title {
@@ -234,7 +239,7 @@ h1, h2, h3 {
 .login-b2access {
 	position: relative;
 	font-size: 1.5em;
-	margin-top: -20px;
+	margin-top: 30px;
 	margin-bottom: 20px;
 }
 
@@ -242,7 +247,7 @@ h1, h2, h3 {
 	background-color: #cdcdcd;
 	height: 1px;
 	margin-top: 0px !important;
-	margin-bottom: 10px !important;
+	margin-bottom: 15px !important;
 }
 
 .login-b2access-span-or {

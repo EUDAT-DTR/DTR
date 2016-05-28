@@ -62,55 +62,104 @@ function AuthenticatorWidget(containerDiv, onAuthenticationStateChangeCallback, 
     }
     
     function buildAuthenticateDialog() {
-        authenticateDiv = $('<div class="modal fade" tabindex="-1"></div>');
-        
-        var modalDialog = $('<div class="modal-dialog"></div>');
-        authenticateDiv.append(modalDialog);
-        
-        var modalContent = $('<div class="modal-content"></div>');
-        modalDialog.append(modalContent);
-        
-        var modalHeader = $('<div class="modal-header"></div>');
-        modalContent.append(modalHeader);
-        var closeButton = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
-        modalHeader.append(closeButton);
 
-        var title = $('<h4 class="modal-title">Authenticate</h4>');
-        modalHeader.append(title);
-        
-        var dialogNotificationsDiv = $('<div></div>');
-        modalContent.append(dialogNotificationsDiv);
-        dialogNotifications = new Notifications(dialogNotificationsDiv); 
-        
-        var modalBody = $('<div class="modal-body"></div>');
-        modalContent.append(modalBody);
-        
-        var dialogNotificationsDiv = $('<div></div>');
-        modalContent.append(dialogNotificationsDiv);
-        dialogNotifications = new Notifications(dialogNotificationsDiv); 
-        
-        
-        var secretForm = $('<form class="form-inline" role="form"></form>');
-        modalBody.append(secretForm);
-        usernameInput = $('<input type="text" class="form-control input-sm username-input" placeholder="Username">');
-        secretForm.append(usernameInput);
-        
-        authenticateDiv.on('shown.bs.modal', function () {
-            usernameInput.focus();
-        });
-        
-        passwordInput = $('<input type="password" class="form-control input-sm" placeholder="Password">');
-        passwordInput.keypress(function(event){
-            if(event.keyCode == 13){ 
-                event.preventDefault();
-                onAuthenticateButtonClick(event);
-            }
-        });
-        secretForm.append(passwordInput);
-        secretForm.append(" ");
-        authenticateButton = $('<button type="button" class="btn btn-sm btn-primary" style="min-width: 130px;" data-loading-text="Authenticating...">Authenticate</button>');
-        secretForm.append(authenticateButton);
-        authenticateButton.click(onAuthenticateButtonClick);
+      authenticateDiv = $('<div class="modal fade" tabindex="-1"></div>');
+
+      var modalDialog = $('<div class="modal-dialog">\
+                             <div class="modal-content">\
+                               <div class="modal-header">\
+                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\
+                                 <h3 class="modal-title">Authenticate</h4>\
+                               </div>\
+                             </div>\
+                           </div>');
+
+      var dialogNotificationsDiv = $('<div></div>');
+      $('.modal-content', modalDialog).append(dialogNotificationsDiv);
+      dialogNotifications = new Notifications(dialogNotificationsDiv); 
+
+      var modalBody = $('<div class="modal-body modal-body-login"></div>');
+      $('.modal-content', modalDialog).append(modalBody);
+
+      var secretForm = $(
+        '<div class="login">\
+           <!-- <h3 class="login-title">Login or <a href="#">Sign up</a></h3> -->\
+           <div class="row">\
+             <div class="col-xs-12 col-sm-12">	\
+               <form id="super_form" class="login-form" action="" autocomplete="off" method="POST">\
+                 <div id="username-input-group" class="input-group login-form-input-group" name="username">\
+                   <span class="input-group-addon">\
+                     <i class="glyphicon glyphicon-user"></i>\
+                   </span>\
+                   <!-- usernameInput -->\
+                 </div>\
+                 <div id="password-input-group" class="input-group login-form-input-group">\
+                   <span class="input-group-addon">\
+                     <i class="glyphicon glyphicon-lock"></i>\
+                   </span>\
+                   <!-- passwordInput -->\
+                 </div>\
+                 <!-- authenticateButton -->\
+               </form>\
+             </div>\
+           </div>\
+           <!-- remember me and password forgotten -->\
+           <!-- disabled for now\
+           <div class="row">\
+             <div class="col-xs-12 col-sm-6 col-sm-offset-0">\
+               <label class="checkbox">\
+               <input type="checkbox" value="remember-me">Remember me</label>\
+             </div>\
+             <div class="col-xs-12 col-sm-6" style="/*border: 1px solid green*/">\
+               <p class="login-forgot-password">\
+                 <a href="#">Forgot password?</a>\
+               </p>\
+             </div>\
+           </div>\
+           -->\
+           <!-- login with b2access -->\
+           <div class="login-b2access">\
+             <div class="row">\
+               <div class="col-xs-12 col-sm-12">\
+                 <hr class="login-b2access-rule">\
+                 <span class="login-b2access-span-or">or</span>\
+               </div>\
+             </div>\
+             <div class="row">\
+               <div class="col-xs-12 col-sm-12">\
+                 <a href="#" class="btn btn-lg btn-block login-b2access-button ">\
+                   <span class="hidden-xs">Sign in with B2ACCESS</span>\
+                 </a>\
+               </div>\
+             </div>\
+           </div>\
+         </div>'
+      );
+
+      $('.modal-body', modalDialog).append(secretForm);
+
+      usernameInput = $('<input type="text" class="form-control username-input" placeholder="username">');
+      $('#username-input-group', modalDialog).append(usernameInput);
+
+      authenticateDiv.on('shown.bs.modal', function () {
+        usernameInput.focus();
+      });
+
+      passwordInput = $('<input type="password" class="form-control" placeholder="password">');
+      passwordInput.keypress(function(event){
+        if(event.keyCode == 13){ 
+          event.preventDefault();
+          onAuthenticateButtonClick(event);
+        }
+      });
+      $('#password-input-group', modalDialog).append(passwordInput);
+
+      authenticateButton = $('<button class="btn btn-lg btn-primary btn-block login-form-button" data-loading-text="Authenticating...">Sign in</button>');
+
+      $('#super_form', modalDialog).append(authenticateButton);
+      authenticateButton.click(onAuthenticateButtonClick);
+
+      authenticateDiv.append(modalDialog);
     }
     
     function onSignInClick() {
