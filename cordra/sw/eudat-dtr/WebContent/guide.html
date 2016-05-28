@@ -1,16 +1,144 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <title></title>
 
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap-custom.css">
   <link rel="stylesheet" type="text/css" href="css/eudat-dtr.css">
   <link rel="stylesheet" type="text/css" href="css/font.css">
+  <script src="jquery/jquery-1.10.2.js"></script>
+
+    <script>
+      jQuery.noConflict();
+      jQuery(function() {
+        jQuery(".refbody").hide();
+        jQuery(".refnum").hover(function(event) {
+          jQuery(this.nextSibling).toggle();
+          event.stopPropagation();
+        });
+        jQuery("body").hover(function(event) {
+          jQuery(".refbody").hide();
+        });
+      });
+    </script>
+
 </head>
-<body>
+
+<style>
+.ref {
+    position: relative;
+    vertical-align: baseline;
+}
+
+.refnum {
+    position: relative;
+    left: 2px;
+    bottom: 1ex;
+    color: #e5601e;
+    font-size: .7em;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: default;
+}
+
+.refbody {
+    font-size: .7em;
+    line-height: 1.1;
+    display: block;
+    min-width: 40em;
+    position: absolute;
+    left: 25px;
+    bottom: 5px ;
+    border: 1px solid;
+    padding: 5px;
+    background-color: #fff;
+    word-wrap: break-word;
+    z-index: 9999;
+    overflow: auto;
+}
+
+</style>
+
+<body style="min-height: 570px">
+
+<div class="container">
+<div class="row">
 
 <h1>User Guide</h1>
-<p>Under construction ...</p>
+<p>
+Automated processing of large amounts of scientific data, especially across
+domains, requires that the data can be parsed without human intervention.<span class="ref"><span class="refnum">[1]</span><span class="refbody">
+Note that "without human intervention" does not mean full automation for reuse 
+but that each instance of reuse does not require complete human re-interpretation 
+of the data.</span></span> Within a given domain that functionality can simply be built into the software,
+e.g., the piece of information that appears in this location is always
+a temperature reading in centigrade or, at a different level of granularity,
+this data set is structured according to Domain Standard A including base types
+X, Y, and Z where the base types are things like temperature readings in
+centigrade. This knowledge, easily available within a given domain or a set of
+closely related research groups, can be built into domain specific processing
+workflows. But outside of that domain or environment the ‘local knowledge’
+approach can begin to fail and more precision in associating data with the
+information needed to process it is required. This also applies across time as
+well as domains. What is well known today may be less well-known twenty years
+hence but age will not necessarily reduce the value of a data set and indeed
+may increase it.
+</p>
+
+<p>
+We are using the term ‘type’ here as the characterization of data structure, contexts, 
+and assumptions. Also, we expect that such ‘typing’ to be applicable at multiple 
+levels of granularity, from individual observations up to and including large data 
+sets. Optimizing the interactions among all of the producers and consumers of 
+digital data requires that those types be defined and permanently associated with 
+the data they describe. Further, the utility of those types requires that they be 
+standardized, unique, and discoverable. The goal of this working group was to 
+address these issues through evaluation of use cases, existing efforts, and potential 
+infrastructural solutions, including the development of one or more type registries.
+</p>
+
+<p>
+Simply listing and describing types in human readable form, say in one or more 
+open access wikis, would certainly be a good start. But full realization of the 
+potential of types in automated data processing will benefit from a common form of 
+machine-readable description of types, i.e., a data model and common expression of 
+that data model. This would not only aid in discoverability but also in the analysis of
+relations among types and evaluation of overlap and duplication as well as possible 
+bootstrapping of automated data processing in some cases.
+</p>
+
+<p>
+Types will be at different levels of granularity, e.g., individual observations, a set of 
+observations composed into a time series, a set of time series describing a complex 
+phenomenon, and so forth. The ease of composing lower level, or base, types into 
+more complex composite types would be an advantage of a well-managed type 
+system.
+</p>
+
+<p>
+An immediate and compelling use case for a managed system of types comes 
+directly out of persistent identifiers (PIDs) for data sets. Accessing a piece of data via 
+a PID, either as a direct reference or as the result of a search, requires resolving the 
+identifier to get the information needed to access the data. This information must be 
+understandable by the client, whether that client is a human or a machine, in order 
+for the client to act on it. For a machine, it must be explicitly typed. A type registry 
+for PID information types would appear to be an early requirement for coherent 
+management of scientific data.
+</p>
+
+<p>
+Finally, assigning PIDs to types, not to be confused with assigning types to PID 
+resolution results, would aid in their management and use. All of the arguments for 
+using persistent identifiers for important digital information that must remain 
+accessible over long periods of time will apply equally well to whatever form of 
+records are kept for data types.
+</p>
+
+<div/>
+<div/>
 
 </body>
+
 </html>
