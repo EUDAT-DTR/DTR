@@ -117,6 +117,33 @@
     </div>
 </div>
 
+<!-- dtr beta warning -->
+<div id="dtr-beta-warning" class="modal fade" role="dialog" tabindex=-1>
+    <div class="modal-dialog" data-dismiss="modal">
+        <div class="modal-content dtr-beta-warning-content">
+            <div class="modal-header dtr-beta-warning-header">
+                <h4 class="modal-title dtr-beta-warning-title">
+                    <span>
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                    </span>
+                    &nbsp;WARNING: This service is Beta!
+                </h4>
+            </div>
+            <div class="modal-body">
+                <p>EUDAT-DTR service is in beta state &ndash; it may be incomplete and still
+                undergoing final testing. As such, it should be used at your own
+                risk. If you wish to sign up as a beta tester or notice any issues,
+                please contact the service coordinator.</p>
+            </div>
+
+            <div class="modal-footer dtr-beta-warning-footer">
+                Click anywhere to dismiss
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
   
     
@@ -176,6 +203,17 @@
     <script>
     $(document).ready(function() {   
         window.APP = new RegistrarApp();
+    });
+
+    $(window).load(function(){
+        // avoid spamming the user
+        if(sessionStorage["beta_warning_shown"] != 'yes') {
+            $('#dtr-beta-warning').modal('show');
+
+            $('#dtr-beta-warning').on('hidden.bs.modal', function() {
+                sessionStorage["beta_warning_shown"] = 'yes';
+            });
+        }
     });
     </script>
 </body>

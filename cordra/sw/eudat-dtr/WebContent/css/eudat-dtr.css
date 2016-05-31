@@ -307,3 +307,22 @@ h1, h2, h3 {
 /* placeholder end */
 
 
+/* styles for the beta warning dialog */
+.dtr-beta-warning-content {
+    /* needed in firefox (at least) to avoid reverting to squared corners */
+    overflow: hidden;
+}
+.dtr-beta-warning-header {
+    background-color: #d9534f;
+}
+
+.dtr-beta-warning-footer {
+    font-size: 15px; 
+    color: #d9534f;
+}
+
+.dtr-beta-warning-title {
+    color: #fff;
+}
+
+
