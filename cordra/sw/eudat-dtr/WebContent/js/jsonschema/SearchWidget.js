@@ -60,8 +60,8 @@ function SearchWidget(containerDiv, resultsContainerDiv, schemas, serverPrefix, 
                   <ul class="searchexamples dropdown-menu"> \
                     <li> \
                       <a href="/help/search-tips"> \
-                        <strong>Search Tips</strong> \
                         <i class="pull-right glyphicon glyphicon-info-sign"></i> \
+                        <strong>Search Tips</strong> \
                       </a> \
                     </li> \
                     <li> \
