@@ -13,33 +13,23 @@
   "navBarLinks": [
     {
       "type": "url",
-      "title": "WHAT IS EUDAT-DTR",
+      "title": "What is EUDAT-DTR",
       "url": "about.html"
     },
     {
       "type": "url",
-      "title": "USER GUIDE",
+      "title": "User Guide",
       "url": "guide.html"
     },
     {
       "type": "url",
-      "title": "FAQS",
+      "title": "FAQs",
       "url": "faq.html"
     },
     {
       "type": "url",
-      "title": "CONTACT",
+      "title": "Contact",
       "url": ""
-    },
-    {
-      "type": "query",
-      "title": "All",
-      "query": "*:*",
-      "sortFields": "/name"
-    },
-    {
-      "type": "typeDropdown",
-      "title": "Types"
     }
   ]
 }

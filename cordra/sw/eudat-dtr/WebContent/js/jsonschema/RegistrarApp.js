@@ -53,7 +53,15 @@ function RegistrarApp() {
         notificationsDiv = $("#notifications");
         relationshipsGraphDiv = $("#relationships");
         htmlContentDiv = $("#htmlContent");
-        $.getJSON("initData").done(onGotInitData);
+
+        $.ajax({
+            url: "initData",
+            beforeSend: function( xhr ) {
+                xhr.overrideMimeType( "application/json" );
+            },
+            dataType: 'json'
+        }).done(onGotInitData);
+
         $(window).resize(onResize);
     }
     
@@ -868,10 +876,16 @@ function RegistrarApp() {
     self.editCurrentObject = editCurrentObject;
     
     function onAuthenticationStateChange() {
+
+        //console.log('onAuthenticationStateChange');
+
         var userId = authWidget.getCurrentUserId();
         if (authConfig) {
-            var types = getTypesUserCanCreate(userId);
-            searchWidget.setAllowCreateTypes(types);
+            var typesCreate = getTypesUserCanCreate(userId);
+            var typesRead = getTypesUserCanRead(userId);
+
+            searchWidget.setAllowCreateTypes(typesCreate);
+            searchWidget.setAllowSearchTypes(typesRead);
         }
         if (editor != null && objectId != null) {
             var currentObjectId = objectId;
@@ -890,9 +904,10 @@ function RegistrarApp() {
                 result.push(type);
             }
         }
+        //console.log('    getTypesUserCanCreate = [' + result + ']');
         return result;
     }
-    
+
     function isAllowedToCreate(userId, type) {
         if (userId === "admin") return true;        
         var acl = null;
@@ -902,6 +917,38 @@ function RegistrarApp() {
         } else {
             if (authConfig.defaultAcls) {
                 acl = authConfig.defaultAcls.aclCreate;
+            }
+        }
+        if (!acl) return false;
+        for (var i = 0; i < acl.length; i++) {
+            var permittedId = acl[i];
+            if ("public" === permittedId) return true;
+            if (userId != null && "authenticated" === permittedId) return true;
+            if (userId === permittedId) return true;
+        }
+        return false;
+    }
+
+    function getTypesUserCanRead(userId) {
+        var result = [];
+        for (var type in schemas) {
+            if (isAllowedToRead(userId, type)) {
+                result.push(type);
+            }
+        }
+        //console.log('    getTypesUserCanRead = [' + result + ']');
+        return result;
+    }
+    
+    function isAllowedToRead(userId, type) {
+        if (userId === "admin") return true;        
+        var acl = null;
+        var schemaAcl = authConfig.schemaAcls[type];
+        if (schemaAcl && schemaAcl.defaultAclRead) {
+            acl = schemaAcl.defaultAclRead;
+        } else {
+            if (authConfig.defaultAcls) {
+                acl = authConfig.defaultAcls.defaultAclRead;
             }
         }
         if (!acl) return false;
@@ -952,7 +999,7 @@ function RegistrarApp() {
     function startsWith(str, prefix) {
         return str.lastIndexOf(prefix, 0) === 0;
     }
-    
+
     constructor();
 }
 

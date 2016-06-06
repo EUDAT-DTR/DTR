@@ -30,7 +30,7 @@ function AuthenticatorWidget(containerDiv, onAuthenticationStateChangeCallback, 
     var ignoreNextHearbeatResponse = false;
     
     function constructor() {
-        signInButton = $('<button type="button" class="btn btn-primary btn-sm">Sign In</button>');
+        signInButton = $('<button type="button" class="btn btn-primary btn-sm" style="float: right">Sign In</button>');
         signInButton.click(onSignInClick);
         containerDiv.append(signInButton);
         
@@ -38,7 +38,7 @@ function AuthenticatorWidget(containerDiv, onAuthenticationStateChangeCallback, 
         containerDiv.append(authenticatedDiv);
         var signOutForm = $('<form class="form-inline"></form>');
         authenticatedDiv.append(signOutForm);
-        var signOutGroup = $('<div class="control-group"></div>');
+        var signOutGroup = $('<div class="control-group" style="float: right"></div>');
         signOutForm.append(signOutGroup);
         
 
@@ -210,9 +210,10 @@ function AuthenticatorWidget(containerDiv, onAuthenticationStateChangeCallback, 
             beforeSend: function (xhr) {
                 var csrfToken = APP.getCsrfCookieToken();
                 if (csrfToken) {
+                    xhr.overrideMimeType( "application/json" );
                     xhr.setRequestHeader('X-Csrf-Token', csrfToken); 
                 }
-            }
+            },
         }).done(onSignOutSuccess).fail(onSignOutError);
     }
     

@@ -21,6 +21,7 @@ function SearchWidget(containerDiv, resultsContainerDiv, schemas, serverPrefix, 
     var lastQueryResponse = null;
     var retrieveJsonForm = null;
     var createButtonSpan = null;
+    var searchTypesButtonSpan = null;
     
     function constructor() {
         
@@ -75,24 +76,6 @@ function SearchWidget(containerDiv, resultsContainerDiv, schemas, serverPrefix, 
 
         searchInputGroup.append(helpTips);
 
-        /* additional buttons for search bar (should use 'width: 1%' if enabled) */
-        // var stuff = $('\
-        //           <input autocomplete="off" data-items="4" name="p" class="form-control" type="text" tabindex="1" placeholder="Search 359 records for" value=""><span class="input-group-btn invenio-collapsable-tabs" data-toggle="buttons"> \
-        //             <a href="#" class="btn btn-default right-not-rounded left-not-rounded" data-toggle="collapse" data-target="#navbar-bottom"> \
-        //               <i class="glyphicon glyphicon-plus"></i> \
-        //               <b class="caret"></b> \
-        //             </a> \
-        //             <a href="#" class="btn btn-default right-not-rounded left-not-rounded" data-toggle="collapse" data-target="#navbar-bottom2"> \
-        //               <i class="glyphicon glyphicon-cog"></i> \
-        //               <b class="caret"></b> \
-        //             </a> \
-        //           </span><span class="input-group-btn"> \
-        //             <button name="action_search" type="submit" class="btn btn-primary btn-inline-icon-hide-sm"> \
-        //               <i class="glyphicon glyphicon-search"></i><span>&nbsp;Search</span> \
-        //             </button> \
-        //           </span>');
-        //searchInputGroup.append(stuff);
-
         searchInput = $('<input type="text" class="form-control" placeholder="Search">');
         searchInputGroup.append(searchInput);
         searchInput.keypress(function(event){
@@ -101,6 +84,18 @@ function SearchWidget(containerDiv, resultsContainerDiv, schemas, serverPrefix, 
                 onSearchButtonClick();
             }
         });
+
+        searchTypesButtonSpan = $('\
+                              <span class="input-group-btn" style="width: 1%"> \
+                                <a href="#" class="dropdown-toggle btn btn-default btn-right-not-rounded btn-left-not-rounded" data-placement="bottom" data-toggle="dropdown"> \
+                                  <i class="glyphicon glyphicon-plus"></i> \
+                                  <b class="caret"></b> \
+                                </a> \
+                              </span>');
+
+        buildSearchTypesDropdown(searchTypesButtonSpan, Object.keys(schemas));
+
+        searchInputGroup.append(searchTypesButtonSpan);
 
         var buttonSpan = $('<span class="input-group-btn" style="width:1%"></span>');
         searchInputGroup.append(buttonSpan);
@@ -165,7 +160,43 @@ function SearchWidget(containerDiv, resultsContainerDiv, schemas, serverPrefix, 
         paginationBottomDiv = $('<div class=""></div>');
         paginationContainerBottomDiv.append(paginationBottomDiv);
     }
-    
+
+    function buildSearchTypesDropdown(buttonSpan, types){
+        var dropdownList = $('<ul id=searchable-types class="dropdown-menu"></lu>');
+        buttonSpan.append(dropdownList);
+
+        var queryAll = $('<li></li>');
+        var linkAll = $('<a href="#" data-query="*:*" data-sort-fields="/name">All</a>');
+
+        queryAll.append(linkAll);
+        linkAll.click(onQueryLinkClick);
+
+        dropdownList.append(queryAll);
+
+        for (var i = 0; i < types.length; i++) {
+            var schemaName = types[i];
+            var linkName = types[i];
+
+            var menuItem = $('<li></li>');
+            dropdownList.append(menuItem);
+            
+            var itemLink = $('<a target="_self"></a>');
+            itemLink.text(linkName);
+            itemLink.attr('href', '#objects/?query=type:' + encodeURIComponent('"' + schemaName + '"'));
+            
+            menuItem.append(itemLink);
+        }
+    }
+
+    function onQueryLinkClick(e) {
+        e.preventDefault();
+        var link = $(this);
+        var query = link.attr('data-query');
+        var sortFields = link.attr('data-sort-fields');
+
+        APP.performSearchWidgetSearch(query, sortFields);
+    }
+
     function setAllowCreateTypes(types) {
         createButtonSpan.empty();
         if (types.length === 0) {
@@ -181,6 +212,12 @@ function SearchWidget(containerDiv, resultsContainerDiv, schemas, serverPrefix, 
         
     } 
     self.setAllowCreateTypes = setAllowCreateTypes;
+
+    function setAllowSearchTypes(types) {
+        $('#searchable-types', searchTypesButtonSpan).remove();
+        buildSearchTypesDropdown(searchTypesButtonSpan, types);
+    }
+    self.setAllowSearchTypes = setAllowSearchTypes;
     
     function setAllowCreate(allowCreateParam) {
         allowCreate = allowCreateParam;

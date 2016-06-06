@@ -325,4 +325,13 @@ h1, h2, h3 {
     color: #fff;
 }
 
+.btn-right-not-rounded {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.btn-left-not-rounded {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
 

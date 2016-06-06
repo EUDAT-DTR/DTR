@@ -10,11 +10,20 @@ package net.cnri.doregistrytools.registrar.auth;
 public class AuthConfigFactory {
 
     public static AuthConfig getDefaultAuthConfig() {
+
         AuthConfig result = new AuthConfig();
+        
         DefaultAcls userAcls = new DefaultAcls();
-        userAcls.defaultAclRead.add("public");
+        
+        userAcls.defaultAclRead.add("admin");
         userAcls.defaultAclWrite.add("self");
+        
         result.schemaAcls.put("User", userAcls);
+
+        DefaultAcls groupAcls = new DefaultAcls();
+        
+        groupAcls.defaultAclRead.add("creator");
+        groupAcls.defaultAclWrite.add("self");
         
         DefaultAcls schemaAcls = new DefaultAcls();
         schemaAcls.defaultAclRead.add("public");
@@ -23,6 +32,7 @@ public class AuthConfigFactory {
         result.defaultAcls.defaultAclRead.add("public");
         result.defaultAcls.defaultAclWrite.add("creator");
         result.defaultAcls.aclCreate.add("authenticated");
+
         return result;
     }
 }
