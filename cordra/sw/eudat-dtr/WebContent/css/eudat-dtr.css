@@ -281,6 +281,7 @@ h1, h2, h3 {
     font-weight: 500;
 }
 
+/*
 .login-b2access-button:hover {
     cursor: default;
     color: white;
@@ -293,9 +294,10 @@ h1, h2, h3 {
 
 .login-b2access-button:active {
     color: white;
-}
+}*/
 
 /* placeholder until b2access integration works */
+/* 
 .login-b2access-button:hover span {
     display: none;
 }
@@ -304,6 +306,7 @@ h1, h2, h3 {
     cursor: default;
     content: "Temporarily disabled, sorry";
 }
+*/
 /* placeholder end */
 
 

@@ -36,4 +36,6 @@ CP=${CP-.}
 # To developers:  make sure there is at least one blank line after
 # this line
 
-exec java -Xmx3G -cp "${CP}" net.cnri.apps.doserver.Main "$@"
+#DEBUG_SSL="-Djavax.net.debug=SSL"
+
+exec java -Xmx3G -Dlog4j.configuration=file:log4j.properties ${DEBUG_SSL} -cp "${CP}" net.cnri.apps.doserver.Main "$@"

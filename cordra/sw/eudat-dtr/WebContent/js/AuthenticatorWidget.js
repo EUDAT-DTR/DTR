@@ -127,7 +127,7 @@ function AuthenticatorWidget(containerDiv, onAuthenticationStateChangeCallback, 
              </div>\
              <div class="row">\
                <div class="col-xs-12 col-sm-12">\
-                 <a href="#" class="btn btn-lg btn-block login-b2access-button ">\
+                 <a href="/oauth/unity/login" class="btn btn-lg btn-block login-b2access-button ">\
                    <span class="hidden-xs">Sign in with B2ACCESS</span>\
                  </a>\
                </div>\
