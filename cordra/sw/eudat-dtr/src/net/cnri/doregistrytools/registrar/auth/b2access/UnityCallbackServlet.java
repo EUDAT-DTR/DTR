@@ -15,6 +15,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,21 +90,25 @@ public class UnityCallbackServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
-        // b2access' Unity redirects with:
-        // http://127.0.0.1:8080/callback?state=this_can_be_anything_to_help_correlate_the_response%3Dlike_session_id&code=4/ygE-kCdJ_pgwb1mKZq3uaTEWLUBd.slJWq1jM9mcUEnp6UAPFm0F2NQjrgwI&authuser=0&prompt=consent&session_state=a3d1eb134189705e9acf2f573325e6f30dd30ee4..d62c
-        //
-        // if the user denied access, we get back an error, e.g.:
-        // error=access_denied&state=session%3Dfoobar
-        
         if(req.getParameter("error") != null) {
+
+            if (req.getParameter("error").equals("access_denied")){
+
+                // redirect the user to the homepage but set a cookie so that
+                // we are aware that an authentication error happened
+                Cookie foo = new Cookie("oauth2-error", req.getParameter("error_description"));
+                foo.setPath("/");
+                resp.addCookie(foo);
+                resp.sendRedirect("/");
+                return;
+            }
+
             resp.getWriter().println(req.getParameter("error"));
             return;
         }
 
-        // Unity returns an authorization code that can be exchanged for an access token
+        // Unity returns a short-lived, one-time authorization code that can 
+        // be exchanged for an access token
         String authCode = req.getParameter("code");
 
         // get Unity's access token
@@ -113,10 +118,20 @@ public class UnityCallbackServlet extends HttpServlet {
 
         map = getUserinfo(accessToken);
 
-        String responseJson = gson.toJson(map);
-        PrintWriter w = resp.getWriter();
-        w.write(responseJson);
-        w.close();
+        boolean authenticated;
+
+        try {
+            // move this to function
+            String username = map.get("email");
+            authenticated = authenticator.authenticateRemote(username, req, resp);
+        } catch (RepositoryException e) {
+            logger.error("Exception in GET /oauth/unity/callback", e);
+            ServletErrorUtil.internalServerError(resp);
+            return;
+        }
+
+        // redirect the user to the homepage
+        resp.sendRedirect("/");
     }
 
     /* helpers */
@@ -251,12 +266,12 @@ public class UnityCallbackServlet extends HttpServlet {
 			System.out.println("Could not parse JSON response");
 			throw new RuntimeException(e.getMessage());
 		}
-		System.out.println();
-		System.out.println("********** Response Received **********");
-		for (Map.Entry<String, String> entry : oauthLoginResponse.entrySet()) {
-			System.out.println(String.format("  %s = %s", entry.getKey(),
-					entry.getValue()));
-		}
+		//System.out.println();
+		//System.out.println("********** Response Received **********");
+		//for (Map.Entry<String, String> entry : oauthLoginResponse.entrySet()) {
+		//	System.out.println(String.format("  %s = %s", entry.getKey(),
+		//			entry.getValue()));
+		//}
 		return oauthLoginResponse;
 	}
 
@@ -267,16 +282,16 @@ public class UnityCallbackServlet extends HttpServlet {
 		Charset charset = null;
 		HttpEntity entity = response.getEntity();
 
-		System.out.println();
-		System.out.println("********** Response Received **********");
+		//System.out.println();
+		//System.out.println("********** Response Received **********");
 
-		for (Map.Entry<String, Charset> entry : set) {
-			System.out.println(String.format("  %s = %s", entry.getKey(),
-					entry.getValue()));
-			if (entry.getKey().equalsIgnoreCase(HTTP.UTF_8)) {
-				charset = entry.getValue();
-			}
-		}
+		//for (Map.Entry<String, Charset> entry : set) {
+		//	System.out.println(String.format("  %s = %s", entry.getKey(),
+		//			entry.getValue()));
+		//	if (entry.getKey().equalsIgnoreCase(HTTP.UTF_8)) {
+		//		charset = entry.getValue();
+		//	}
+		//}
 
 		try {
 			List<NameValuePair> list = URLEncodedUtils.parse(
@@ -368,5 +383,18 @@ public class UnityCallbackServlet extends HttpServlet {
 //
 //        return body;
 //    }
+
+    @SuppressWarnings("unused")
+    private static class AuthResponse {
+        boolean success = false;
+        String userId;
+        String username;
+        
+        public AuthResponse(boolean success, String userId, String username) {
+            this.success = success;
+            this.userId = userId;
+            this.username = username;
+        }
+    }
 
 }

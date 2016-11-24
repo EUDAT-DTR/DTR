@@ -46,6 +46,17 @@ public class DefaultSchemasFactory {
             try { resource.close(); } catch (Exception e) { }
         }
     }
+
+    public static String getDefaultRemoteUserSchema() {
+        InputStream resource = DefaultSchemasFactory.class.getResourceAsStream("schema.ruser.json");
+        try {
+            return StreamUtil.readFully(new InputStreamReader(resource, "UTF-8"));
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        } finally {
+            try { resource.close(); } catch (Exception e) { }
+        }
+    }
     
     public static String getDefaultDocumentSchema() {
         InputStream resource = DefaultSchemasFactory.class.getResourceAsStream("schema.document.json");
@@ -57,4 +68,16 @@ public class DefaultSchemasFactory {
             try { resource.close(); } catch (Exception e) { }
         }
     }
+
+    public static String getDefaultDataTypeSchema() {
+        InputStream resource = DefaultSchemasFactory.class.getResourceAsStream("schema.datatype.json");
+        try {
+            return StreamUtil.readFully(new InputStreamReader(resource, "UTF-8"));
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        } finally {
+            try { resource.close(); } catch (Exception e) { }
+        }
+    }
+
 }

@@ -11,6 +11,8 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.Cookie;
@@ -30,7 +32,22 @@ import net.cnri.util.FastDateFormat;
 import net.cnri.doregistrytools.registrar.auth.HashAndSalt;
 import net.cnri.doregistrytools.registrar.doip.RegistrarDoipOperations;
 
+import javax.servlet.ServletException;
+import net.cnri.doregistrytools.registrar.jsonschema.InvalidException;
+import net.cnri.doregistrytools.registrar.jsonschema.Payload;
+import net.cnri.doregistrytools.registrar.jsonschema.RegistrarService;
+import net.cnri.doregistrytools.registrar.jsonschema.RegistrarServiceFactory;
+import net.cnri.doregistrytools.registrar.jsonschema.ServletErrorUtil;
+import org.json.JSONObject;
+import net.cnri.repository.CreationException;
+import net.cnri.repository.InternalException;
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RegistrarAuthenticator {
+    private static Logger logger = LoggerFactory.getLogger(RegistrarAuthenticator.class);
     private AdminPasswordCheckerInterface adminPasswordChecker = null;
     private SecureRandom random = null;
     private Repository repo;
@@ -42,6 +59,47 @@ public class RegistrarAuthenticator {
         this.adminPasswordChecker = adminPasswordChecker;
         this.random = new SecureRandom();
         this.repo = repo;
+    }
+
+    // return true if the user is authenticated remotely; in which case, session is populated
+    public boolean authenticateRemote(String username, HttpServletRequest req, HttpServletResponse resp) throws RepositoryException, IOException {
+
+        // if user authentication is done remotely, we don't need to verify
+        // any password, since there isn't one. What we do need to do, is 
+        // create a corresponding user object for the remote user the first time
+        // that the end user logs in
+        DigitalObject user = getRemoteUserObject(username);
+
+        if(user == null) {
+            HttpSession session = req.getSession(true);
+
+            try {
+                user = createRemoteUserObject(username, session);
+            } catch(CreationException e){
+                if(e.getMessage() != null){
+                    ServletErrorUtil.badRequest(resp, e.getMessage());
+                    logger.error("CreationException in authenticateRemote", e);
+                }
+                return false;
+            } catch (InternalException e) {
+                ServletErrorUtil.internalServerError(resp);
+                logger.error("InternalException in authenticateRemote", e);
+                return false;
+            } catch (InvalidException invalidException) {
+                ServletErrorUtil.badRequest(resp, invalidException.getMessage());
+                logger.error("InvalidException in authenticateRemote", invalidException);
+                return false;
+            } catch (Exception e) {
+                ServletErrorUtil.internalServerError(resp);
+                logger.error("Unexpected exception in doPost", e);
+                return false;
+            }
+        }
+
+        String userId = user.getHandle();
+        setUpSessionForNewAuthentication(req, resp, username, userId);
+
+        return true;
     }
 
     // return true if the user is authenticated; in which case, session is populated
@@ -152,6 +210,31 @@ public class RegistrarAuthenticator {
         session.setAttribute("username", username);
         session.setAttribute("userId", userId);
     }
+
+    private DigitalObject createRemoteUserObject(String username, HttpSession session) throws Exception {
+
+        DigitalObject dobj;
+
+        try {
+            RegistrarService registrar = RegistrarServiceFactory.getRegistrarService(
+                    session.getServletContext());
+
+            String objectType = "RemoteUser";
+
+            String jsonData = new JSONObject()
+                .put("identifier", "")
+                .put("username", username)
+                .put("authenticator", "B2ACCESS")
+                .toString();
+
+            List<Payload> payloads = new ArrayList<Payload>();
+            dobj = registrar.writeJsonAndPayloadsIntoDigitalObjectIfValid(objectType, jsonData, payloads, /* handle = */ null, /* creatorId = */ null);
+        } catch(Exception e){
+            throw e;
+        }
+
+        return dobj;
+    }
     
     private DigitalObject getUserObject(String username) throws RepositoryException {
         DigitalObject user = null;
@@ -169,6 +252,31 @@ public class RegistrarAuthenticator {
         }
         return user;
     }
+
+    private DigitalObject getRemoteUserObject(String username) throws RepositoryException {
+        DigitalObject user = null;
+        Query q = new RawQuery("username:\"" + username + "\"");
+        ensureIndexUpToDate();
+        CloseableIterator<DigitalObject> results = repo.search(q);
+        try {
+            if (results.hasNext()) {
+                user = results.next();
+
+                String type = user.getAttribute("type");
+
+                // make sure that the object found is of the expected Type
+                if (!"RemoteUser".equals(type)) {
+                    user = null;
+                }
+            }
+        } catch (UncheckedRepositoryException e) {
+            e.throwCause();
+        } finally {
+            results.close();
+        }
+        return user;
+    }
+
     
     public void ensureIndexUpToDate() throws RepositoryException {
         if (repo instanceof NetworkedRepository) {

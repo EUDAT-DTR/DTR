@@ -152,6 +152,7 @@
     <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script> -->
     
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="js/js.cookie.js"></script>
     
     
     <script src="tv4/tv4.js"></script>
@@ -199,8 +200,11 @@
     <script src="js/jsonschema/FileIconUtil.js"></script>
     
     <script src="js/SubscriptionBanner.js"></script>
+
+    <script src="js/b2access/Authenticator.js"></script>
         
     <script>
+
     $(document).ready(function() {   
         window.APP = new RegistrarApp();
     });
@@ -213,6 +217,16 @@
             $('#dtr-beta-warning').on('hidden.bs.modal', function() {
                 sessionStorage["beta_warning_shown"] = 'yes';
             });
+        }
+
+        var errorMsg = Cookies.get('oauth2-error');
+
+        if(errorMsg != null){
+            var notifications = new Notifications("<div></div>");
+            notifications.alertError(errorMsg);
+
+            // remove cookie now that user has been notified
+            Cookies.remove('oauth2-error');
         }
     });
     </script>

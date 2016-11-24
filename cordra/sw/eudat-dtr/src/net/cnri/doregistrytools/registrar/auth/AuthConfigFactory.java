@@ -20,10 +20,19 @@ public class AuthConfigFactory {
         
         result.schemaAcls.put("User", userAcls);
 
+        DefaultAcls remoteUserAcls = new DefaultAcls();
+
+        userAcls.defaultAclRead.add("admin");
+        userAcls.defaultAclWrite.add("self");
+        
+        result.schemaAcls.put("RemoteUser", userAcls);
+
         DefaultAcls groupAcls = new DefaultAcls();
         
         groupAcls.defaultAclRead.add("creator");
         groupAcls.defaultAclWrite.add("self");
+
+        result.schemaAcls.put("Group", groupAcls);
         
         DefaultAcls schemaAcls = new DefaultAcls();
         schemaAcls.defaultAclRead.add("public");

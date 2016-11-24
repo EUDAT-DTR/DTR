@@ -100,7 +100,7 @@ public class RegistrarService {
 
     final JsonNode schemaSchemaNode;
     final JsonSchema schemaSchema;
-    
+
     Design design;
     volatile Map<TypeAndRegistrar, SchemaAndNode> schemas;
     Map<String, AuthConfig> remoteAuthConfigs;
@@ -169,16 +169,21 @@ public class RegistrarService {
     }
     
     public synchronized void loadPersistentMetadata() throws RepositoryException, InvalidException {
+
+        boolean reloadUIConfig = Boolean.getBoolean("dtr.jsonschema.uiconfig.reload");
+
         try {
             DigitalObject designObject = getDesignDigitalObject();
             if (designObject == null) {
                 logger.info("Creating new design object.");
+                System.out.println("Creating new design object.");
                 designObject = createNewDesignDigitalObject();
             }
+                 
             if (!"true".equals(designObject.getAttribute("meta"))) {
                 designObject.setAttribute("meta", "true");
             }
-            if (designObject.getAttribute("uiConfig") == null) {
+            if (designObject.getAttribute("uiConfig") == null || reloadUIConfig) {
                 designObject.setAttribute("uiConfig", defaultUiConfig);
             }
             if (designObject.getAttribute("authConfig") == null) {
@@ -583,17 +588,23 @@ public class RegistrarService {
         Map<String, String> schemaIds = new HashMap<String, String>();
         String userId = createSchemaObject("User", DefaultSchemasFactory.getDefaultUserSchema());
         schemaIds.put(userId, "User");
+
+        String remoteUserId = createSchemaObject("RemoteUser", DefaultSchemasFactory.getDefaultRemoteUserSchema());
+        schemaIds.put(remoteUserId, "RemoteUser");
+
         String groupId = createSchemaObject("Group", DefaultSchemasFactory.getDefaultGroupSchema());
         schemaIds.put(groupId, "Group");
         String docId = createSchemaObject("Document", DefaultSchemasFactory.getDefaultDocumentSchema());
         schemaIds.put(docId, "Document");
+
+        String dataTypeId = createSchemaObject("DataType 1.0", DefaultSchemasFactory.getDefaultDataTypeSchema());
+        schemaIds.put(dataTypeId, "DataType 1.0");
         
         atts.put(SCHEMAS, gson.toJson(schemaIds));
-        atts.put("version", "1");
         designObject.setAttributes(atts);
         return designObject;
     }
-    
+
     private String createSchemaObject(String name, String schema) throws RepositoryException {
         return createSchemaObject(this.handleMinter, this.repo, name, schema);
     }
@@ -622,6 +633,7 @@ public class RegistrarService {
         atts.put(AccessControlList.CREATED_BY_ATTRIBUTE, "admin");
         atts.put(AccessControlList.MODIFIED_BY_ATTRIBUTE, "admin");
         atts.put("schemaName", name);
+        atts.put("version", "1");
         dobj.setAttributes(atts);
         return dobj.getHandle();
     }
