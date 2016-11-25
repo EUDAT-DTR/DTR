@@ -39,7 +39,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
@@ -60,6 +59,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import java.io.File;
+import javax.net.ssl.SSLContext;
+import org.apache.http.ssl.SSLContexts;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 
 @WebServlet({"/oauth/unity/callback"})
@@ -158,14 +166,17 @@ public class UnityCallbackServlet extends HttpServlet {
 
             post.setEntity(new UrlEncodedFormEntity(parametersBody, HTTP.UTF_8));
 
-            DefaultHttpClient client = new DefaultHttpClient();
-            HttpResponse response = client.execute(post);
+            CloseableHttpClient httpclient = createHttpClient(UnityConstants.allowSelfSignedCert);
+
+            CloseableHttpResponse response = httpclient.execute(post);
 
             int code = response.getStatusLine().getStatusCode();
 
             // XXX do something with the status code
-
             map = handleResponse(response);
+
+            httpclient.close();
+            response.close();
 
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
@@ -175,7 +186,11 @@ public class UnityCallbackServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
-		}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException(e.getMessage());
+        }
 
 		return map;
     }
@@ -189,14 +204,18 @@ public class UnityCallbackServlet extends HttpServlet {
 
         try {
 
-            DefaultHttpClient client = new DefaultHttpClient();
-            HttpResponse response = client.execute(get);
+            CloseableHttpClient httpclient = createHttpClient(UnityConstants.allowSelfSignedCert);
+
+            CloseableHttpResponse response = httpclient.execute(get);
 
             int code = response.getStatusLine().getStatusCode();
 
             // XXX do something with the status code
 
             map = handleResponse(response);
+
+            httpclient.close();
+            response.close();
 
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
@@ -206,7 +225,11 @@ public class UnityCallbackServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
-		}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException(e.getMessage());
+        }
 
 		return map;
     }
@@ -360,31 +383,30 @@ public class UnityCallbackServlet extends HttpServlet {
         }
     }
 
+    private static CloseableHttpClient createHttpClient(boolean allowSelfSignedCertificates) throws Exception {
 
+        if (allowSelfSignedCertificates) {
+            // Trust own CA and all self-signed certs
+            SSLContext sslcontext = SSLContexts.custom()
+                .loadTrustMaterial(new File(UnityConstants.clientKeystore),
+                        UnityConstants.clientKeystorePassword.toCharArray(),
+                        new TrustSelfSignedStrategy())
+                .build();
 
+            // allow TLSv1 only
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+                    sslcontext, 
+                    new String[] { "TLSv1" },
+                    null,
+                    SSLConnectionSocketFactory.getDefaultHostnameVerifier());
 
+            return HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .build();
+        }
 
-
-
-
-
-
-
-
-    // makes request and checks response code for 200
-//    private String execute(HttpRequestBase request) throws ClientProtocolException, IOException {
-//        HttpClient httpClient = new DefaultHttpClient();
-//        HttpResponse response = httpClient.execute(request);
-//
-//        HttpEntity entity = response.getEntity();
-//        String body = EntityUtils.toString(entity);
-//
-//        if (response.getStatusLine().getStatusCode() != 200) {
-//            throw new RuntimeException("Expected 200 but got " + response.getStatusLine().getStatusCode() + ", with body " + body);
-//        }
-//
-//        return body;
-//    }
+        return HttpClients.createDefault();
+    }
 
     @SuppressWarnings("unused")
     private static class AuthResponse {

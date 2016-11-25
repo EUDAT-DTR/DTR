@@ -17,6 +17,9 @@ public class UnityConstants {
     public static final String CLIENT_ID = "client_id";
     public static final String CALLBACK_URI = "callback_uri";
     public static final String CLIENT_SECRET = "client_secret";
+    public static final String ALLOW_SELF_SIGNED_CERTIFICATE = "allow_self_signed_certificate";
+    public static final String CLIENT_KEYSTORE = "client_keystore";
+    public static final String CLIENT_KEYSTORE_PASSWORD = "client_keystore_password";
 
     public static String authorizationEndpoint = null;
     public static String tokenEndpoint = null;
@@ -24,6 +27,9 @@ public class UnityConstants {
     public static String clientId = null;
     public static String callbackUri = null;
     public static String clientSecret = null;
+    public static boolean allowSelfSignedCert = false;
+    public static String clientKeystore = null;
+    public static String clientKeystorePassword = null;
 
     public static void readUnityConfig() throws Exception {
 
@@ -44,6 +50,9 @@ public class UnityConstants {
                 clientId = b2accessConfig.getStr(CLIENT_ID, null);
                 callbackUri = b2accessConfig.getStr(CALLBACK_URI, null);
                 clientSecret = b2accessConfig.getStr(CLIENT_SECRET, null);
+                allowSelfSignedCert = b2accessConfig.getBoolean(ALLOW_SELF_SIGNED_CERTIFICATE, false);
+                clientKeystore = b2accessConfig.getStr(CLIENT_KEYSTORE, null);
+                clientKeystorePassword = b2accessConfig.getStr(CLIENT_KEYSTORE_PASSWORD);
 
                 System.out.println("*********************************");
                 System.out.println("B2ACCESS Config:");
@@ -52,8 +61,10 @@ public class UnityConstants {
                 System.out.println("clientId: " + clientId);
                 System.out.println("callbackUri: " + callbackUri);
                 System.out.println("clientSecret: " + clientSecret);
+                System.out.println("allowSelfSignedCert: " + allowSelfSignedCert);
+                System.out.println("clientKeystore: " + clientKeystore);
+                System.out.println("clientKeystorePassword: " + clientKeystorePassword);
                 System.out.println("*********************************");
-
 
             } else {
                 logger.error("b2access config file does not exist");
