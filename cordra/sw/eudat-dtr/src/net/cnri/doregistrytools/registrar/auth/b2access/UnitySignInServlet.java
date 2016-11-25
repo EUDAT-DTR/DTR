@@ -14,10 +14,18 @@ public class UnitySignInServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
+
+        try {
+            UnityConstants.readUnityConfig();
+        } catch (Exception e) {
+        }
+
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+
         String url = getAuthorizationUrl();
         resp.sendRedirect(url);
     }

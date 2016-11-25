@@ -36,7 +36,7 @@ CP=${CP-.}
 # To developers:  make sure there is at least one blank line after
 # this line
 
-#LOG_TO_STDOUT="-Dlog4j.configuration=file:log4j.properties"
+LOG_TO_STDOUT="-Dlog4j.configuration=file:log4j.properties"
 #DEBUG_SSL="-Djavax.net.debug=SSL"
 #REBUILD_UI="-Ddtr.jsonschema.uiconfig.reload=true"
 #REBUILD_SCHEMAS="-Ddtr.jsonschema.schemas.reload=true"

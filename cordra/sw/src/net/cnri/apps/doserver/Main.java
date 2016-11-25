@@ -769,6 +769,14 @@ public class Main {
         return this.baseDir;
     }
 
+    /**
+     * Returns the running server instance
+     */
+    public static Main getRunningMain() {
+        return Main.runningMain;
+    }
+
+
     /** Add the given knowbot to the set of operators for this repository */
     /*
      * public final void addOperatorElement(String knowbotElement, InputStream knowbotStream, Signature serverSig) throws Exception { // start a
