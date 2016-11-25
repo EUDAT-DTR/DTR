@@ -40,6 +40,8 @@ public class UnitySignInServlet extends HttpServlet {
             .append("&scope=GENERATE_USER_CERTIFICATE+USER_PROFILE")
             .append("&redirect_uri=").append(UnityConstants.callbackUri);
 
+        System.out.println("*** redirect_uri=" + UnityConstants.callbackUri);
+
         return url.toString();
     }
 }
