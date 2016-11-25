@@ -54,17 +54,17 @@ public class UnityConstants {
                 clientKeystore = b2accessConfig.getStr(CLIENT_KEYSTORE, null);
                 clientKeystorePassword = b2accessConfig.getStr(CLIENT_KEYSTORE_PASSWORD);
 
-                System.out.println("*********************************");
-                System.out.println("B2ACCESS Config:");
-                System.out.println("tokenEndpoint: " + tokenEndpoint);
-                System.out.println("userinfoEndpoint: " + userinfoEndpoint);
-                System.out.println("clientId: " + clientId);
-                System.out.println("callbackUri: " + callbackUri);
-                System.out.println("clientSecret: " + clientSecret);
-                System.out.println("allowSelfSignedCert: " + allowSelfSignedCert);
-                System.out.println("clientKeystore: " + clientKeystore);
-                System.out.println("clientKeystorePassword: " + clientKeystorePassword);
-                System.out.println("*********************************");
+                // System.out.println("*********************************");
+                // System.out.println("B2ACCESS Config:");
+                // System.out.println("tokenEndpoint: " + tokenEndpoint);
+                // System.out.println("userinfoEndpoint: " + userinfoEndpoint);
+                // System.out.println("clientId: " + clientId);
+                // System.out.println("callbackUri: " + callbackUri);
+                // System.out.println("clientSecret: " + clientSecret);
+                // System.out.println("allowSelfSignedCert: " + allowSelfSignedCert);
+                // System.out.println("clientKeystore: " + clientKeystore);
+                // System.out.println("clientKeystorePassword: " + clientKeystorePassword);
+                // System.out.println("*********************************");
 
             } else {
                 logger.error("b2access config file does not exist");

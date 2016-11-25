@@ -1,0 +1,11 @@
+{
+  "authorization_endpoint" = "{OAUTH2_AUTHORIZATION_ENDPOINT}"
+  "token_endpoint" = "{OAUTH2_TOKEN_ENDPOINT}"
+  "userinfo_endpoint" = "{OAUTH2_USER_INFO_ENDPOINT}"
+  "client_id" = "{OAUTH2_CLIENT_ID}"
+  "callback_uri" = "{OAUTH2_CLIENT_DOMAIN}/oauth/unity/callback"
+  "client_secret" = "{OAUTH2_CLIENT_SECRET}"
+  "allow_self_signed_certificate" = "false"
+  "client_keystore" = "{KEYSTORE_WITH_SERVER_CERT}"
+  "client_keystore_password" = "{KEYSTORE_PASSWORD}"
+}
