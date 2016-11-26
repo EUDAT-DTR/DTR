@@ -95,6 +95,13 @@ public class UnityCallbackServlet extends HttpServlet {
         } 
     }
 
+    private void redirectWithError(String url, HttpServletResponse resp, String message) throws IOException {
+        Cookie cookie = new Cookie("oauth2-error", message);
+        cookie.setPath("/");
+        resp.addCookie(cookie);
+        resp.sendRedirect("/");
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -104,16 +111,24 @@ public class UnityCallbackServlet extends HttpServlet {
 
             if (req.getParameter("error").equals("access_denied")){
 
-                // redirect the user to the homepage but set a cookie so that
-                // we are aware that an authentication error happened
-                Cookie foo = new Cookie("oauth2-error", req.getParameter("error_description"));
-                foo.setPath("/");
-                resp.addCookie(foo);
-                resp.sendRedirect("/");
+                String message = req.getParameter("error_description");
+
+                // redirect the user to the homepage but with a message
+                // informing that an authentication error happened
+                redirectWithError("/", resp, message);
                 return;
             }
 
             resp.getWriter().println(req.getParameter("error"));
+            return;
+        }
+
+        // verify that the returned state token is the same that we sent
+        // when we issued the request
+        String stateToken = req.getParameter("state");
+
+        if(!UnityConstants.validateSecureToken(stateToken)){
+            redirectWithError("/", resp, "Authentication Error: Invalid CSRF token! Possible security risk!");
             return;
         }
 

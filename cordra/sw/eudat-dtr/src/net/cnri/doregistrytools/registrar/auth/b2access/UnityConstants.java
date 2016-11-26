@@ -7,6 +7,11 @@ import net.cnri.util.StreamTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import io.jsonwebtoken.*;
+import java.util.Date;
+import java.util.StringJoiner;
+
 public class UnityConstants {
 
     private static Logger logger = LoggerFactory.getLogger(UnityConstants.class);
@@ -30,6 +35,11 @@ public class UnityConstants {
     public static boolean allowSelfSignedCert = false;
     public static String clientKeystore = null;
     public static String clientKeystorePassword = null;
+
+    public static final String remoteApp = "B2ACCESS";
+    public static final String tokenIssuer = "dtr-pilot";
+    public static final String tokenSubject = "unity-oauth2-request";
+    public static final long tokenTTLSeconds = 300;
 
     public static void readUnityConfig() throws Exception {
 
@@ -76,4 +86,61 @@ public class UnityConstants {
             throw e;
         }
     } 
+
+    public static String createSecureToken() throws Exception {
+
+        long nowMillis = System.currentTimeMillis();
+        long expMillis = nowMillis + tokenTTLSeconds*1000;
+
+        String secret = new StringJoiner(":")
+            .add(remoteApp)
+            .add(clientSecret)
+            .toString();
+
+        String token = Jwts.builder()
+            .setIssuedAt(new Date(nowMillis))
+            .setExpiration(new Date(expMillis))
+            .setSubject(tokenSubject)
+            .setIssuer(tokenIssuer)
+            .signWith(
+                SignatureAlgorithm.HS256,
+                secret.getBytes("UTF-8")
+            )
+            .compact();
+
+        return token;
+    }
+
+    public static boolean validateSecureToken(String token) {
+
+        String secret = new StringJoiner(":")
+            .add(remoteApp)
+            .add(clientSecret)
+            .toString();
+
+        try {
+
+            Jws<Claims> claims = Jwts.parser()
+                .setSigningKey(secret.getBytes("UTF-8"))
+                .parseClaimsJws(token);
+
+            if (!claims.getBody().getSubject().equals(tokenSubject)) {
+                System.out.println(claims.getBody().getSubject() + " vs " + tokenSubject);
+                return false;
+            }
+
+            if (!claims.getBody().getIssuer().equals(tokenIssuer)) {
+                System.out.println(claims.getBody().getIssuer() + " vs " + tokenIssuer);
+                return false;
+            }
+        } catch (UnsupportedEncodingException e) {
+            System.out.println(e);
+            return false;
+        } catch (RuntimeException e) {
+            System.out.println(e);
+            return false;
+        }
+
+        return true;
+    }
 }
