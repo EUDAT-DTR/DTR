@@ -3,3 +3,6 @@ cordra/sw/eudat-dtr/build
 cordra/sw/eudat-dtr/build-deps
 cordra/sw/eudat-dtr/dist
 cordra/sw/eudat-dtr/WebContent/WEB-INF/lib/
+.gradle
+build
+dist
