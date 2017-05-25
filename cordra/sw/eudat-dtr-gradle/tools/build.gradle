@@ -23,7 +23,7 @@ configure(subprojects.findAll {it.name == 'json_exporter'}) {
         // some dependencies have been developed by CNRI and must be 
         // available locally. We use the build-deps directory for that
         flatDir {
-            dirs "$rootDir/build-deps"
+            dirs "$rootDir/../build-deps"
         }
         mavenCentral()
     }
