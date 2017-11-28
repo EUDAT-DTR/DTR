@@ -10,7 +10,7 @@ apply plugin: 'war'
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
 
-project.webAppDirName = 'webapp'
+project.webAppDirName = 'web-contents'
 
 configurations {
     all*.transitive = false
