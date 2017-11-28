@@ -1,0 +1,3 @@
+rootProject.name ='EUDAT-DTR Tools'
+include 'json_exporter'
+

@@ -1,0 +1,35 @@
+{
+  "title": "EUDAT-DTR (beta)",
+  "relationshipsButtonText": "Show Relationships",
+  "allowUserToSpecifySuffixOnCreate": true,
+  "searchResults": {
+    "includeType": true,
+    "includeModifiedDate": false,
+    "includeCreatedDate": false
+  },
+  "initialQuery": "*:*",
+  "initialFragment": "urls/intro.html",
+  "initialSortFields": "/name",
+  "navBarLinks": [
+    {
+      "type": "url",
+      "title": "What is EUDAT-DTR",
+      "url": "about.html"
+    },
+    {
+      "type": "url",
+      "title": "User Guide",
+      "url": "guide.html"
+    },
+    {
+      "type": "url",
+      "title": "FAQs",
+      "url": "faq.html"
+    },
+    {
+      "type": "url",
+      "title": "Contact",
+      "url": ""
+    }
+  ]
+}

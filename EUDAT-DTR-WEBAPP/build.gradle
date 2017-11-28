@@ -1,0 +1,87 @@
+description="""
+EUDAT Data Type Registry Prototype
+
+Project name: ${project.name}
+
+"""
+
+apply plugin: 'war'
+
+sourceCompatibility = '1.6'
+targetCompatibility = '1.6'
+
+project.webAppDirName = 'webapp'
+
+configurations {
+    all*.transitive = false
+}
+
+repositories {
+    // fetch as many dependencies as possible remotely from Maven
+    mavenCentral()
+
+    // some dependencies have been developed by CNRI and must be 
+    // available locally. We use the build-deps directory for that
+    flatDir {
+        dirs 'build-deps'
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = [ "src" ]
+        }
+    }
+}
+
+dependencies {
+    // dependencies developed by CNRI and not available through maven
+    compile name: 'dorepository-api-1.1'
+    compile name: 'javax.mail'
+    compile name: 'tika-app-1.11-no-logging-no-http'
+    providedCompile name: 'cnriutil'
+    providedCompile name: 'doapps'
+    providedCompile name: 'do'
+    providedCompile name: 'handle'
+
+    // dependencies that can be downloaded through maven
+    compile group: 'com.github.fge', name: 'btf', version: '1.2'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+    compile group: 'com.google.guava', name: 'guava', version: '16.0.1'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.4.1'
+    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.1'
+    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.4.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.4.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.4.0'
+    compile group: 'com.github.fge', name: 'jackson-coreutils', version: '1.8'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.4.0'
+    compile group: 'joda-time', name: 'joda-time', version: '2.3'
+    compile group: 'com.github.fge', name: 'json-schema-core', version: '1.2.4'
+    compile group: 'com.github.fge', name: 'json-schema-validator', version: '2.2.5'
+    compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '6.0'
+    compile group: 'com.github.fge', name: 'msg-simple', version: '1.1'
+    compile group: 'org.mozilla', name: 'rhino', version: '1.7R4'
+    compile group: 'com.github.fge', name: 'uri-template', version: '0.9'
+
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+    providedCompile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
+    providedCompile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '4.7.2'
+    providedCompile group: 'org.apache.lucene', name: 'lucene-core', version: '4.7.2'
+    providedCompile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '4.7.2'
+    providedCompile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.7'
+
+}
+
+// some special json configuraiton files need to be included into the resulting 
+// war in the jsonschema subdirectory. It would be better if they were placed 
+// in another (more sensible) subdirectory, but the original CNRI code uses 
+// them there and we don't want to alter it if possible.
+war {
+    from('src/net/cnri/doregistrytools/registrar/jsonschema/') {
+        include '*.json'
+        into('WEB-INF/classes/net/cnri/doregistrytools/registrar/jsonschema/')
+    }
+}
+
