@@ -18,17 +18,7 @@ async_run() {
     return $EXIT_STATUS
 }
 
-# if the 'configure' argument was passed to docker,
-# configure this DTR instance
-if [ "$1" = "configure" ]; then
-
-    # make sure that 'configure' was called with docker in interactive mode
-    if [ ! -t 0 ]; then
-        echo "ERROR: configuration must be run in an interactive shell!"
-        echo "   (try: docker run -it DOCKER_TAG configure)"
-        exit 1
-    fi
-
+configure_cordra() {
     # the user may not want to configure the repository if they only 
     # want to test the software, or if they are already happy with
     # the current configuration
@@ -44,7 +34,9 @@ if [ "$1" = "configure" ]; then
             * ) echo "Please answer yes or no.";;
         esac
     done
+}
 
+configure_b2access() {
     # the user may not want to configure b2access support at this moment
     while true; do
         read -p "Do you wish to configure the support for B2ACCESS authentication? " yn 
@@ -58,10 +50,34 @@ if [ "$1" = "configure" ]; then
             * ) echo "Please answer yes or no.";;
         esac
     done
+}
 
+# if the 'configure' argument was passed to docker,
+# configure this DTR instance
+if [ "$1" = "configure" ]; then
+
+    # make sure that 'configure' was called with docker in interactive mode
+    if [ ! -t 0 ]; then
+        echo "ERROR: configuration must be run in an interactive shell!"
+        echo "   (try: docker run -v CFG_FILES_PATH:CONTAINER_PATH -it DOCKER_TAG configure)"_
+        exit 1
+    fi
+
+    configure_cordra
+    configure_b2access
     exit 0
-fi
 
-async_run $@
+elif [ "$1" = "./startup" ]; then
+
+    if [ ! -e $DTRDATA/privatekey ]; then
+        echo "This image of EUDAT-DTR has not been configured"
+        echo "   (try: docker run -v CFG_FILES_PATH:CONTAINER_PATH -it DOCKER_TAG configure)"_
+        exit 1
+    fi
+
+    async_run $@
+else
+    exec $@
+fi
 
 echo "done!"
