@@ -1,4 +1,5 @@
-cordra/data
+cordra/data/*
+!cordra/data/webapps-priority
 cordra/sw/eudat-dtr/build
 cordra/sw/eudat-dtr/build-deps
 cordra/sw/eudat-dtr/dist

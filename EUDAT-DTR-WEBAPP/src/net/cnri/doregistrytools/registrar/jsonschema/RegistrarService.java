@@ -172,11 +172,14 @@ public class RegistrarService {
 
         boolean reloadUIConfig = Boolean.getBoolean("dtr.jsonschema.uiconfig.reload");
 
+        if(reloadUIConfig) {
+            logger.info("Rebuilding UI and reloading default schemas...");
+        }
+
         try {
             DigitalObject designObject = getDesignDigitalObject();
-            if (designObject == null) {
+            if (designObject == null || reloadUIConfig) {
                 logger.info("Creating new design object.");
-                System.out.println("Creating new design object.");
                 designObject = createNewDesignDigitalObject();
             }
                  
@@ -573,7 +576,15 @@ public class RegistrarService {
     
     // Note: consider changing MigrationService when changing this method
     private DigitalObject createNewDesignDigitalObject() throws RepositoryException {
-        DigitalObject designObject = repo.createDigitalObject(DESIGN_OBJECT_ID);
+
+        DigitalObject designObject = repo.getDigitalObject(DESIGN_OBJECT_ID);
+
+        if (designObject != null) {
+            repo.deleteDigitalObject(DESIGN_OBJECT_ID);
+        }
+
+        designObject = repo.createDigitalObject(DESIGN_OBJECT_ID);
+
         Map<String, String> atts = new HashMap<String, String>();
         atts.put("uiConfig", defaultUiConfig);
         atts.put("type", "design");

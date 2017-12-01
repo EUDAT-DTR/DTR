@@ -148,6 +148,9 @@ public class UnityCallbackServlet extends HttpServlet {
         try {
             // move this to function
             String username = map.get("email");
+
+            //System.out.println("*** Username received!: " + username);
+
             authenticated = authenticator.authenticateRemote(username, req, resp);
         } catch (RepositoryException e) {
             logger.error("Exception in GET /oauth/unity/callback", e);
@@ -306,12 +309,12 @@ public class UnityCallbackServlet extends HttpServlet {
 			System.out.println("Could not parse JSON response");
 			throw new RuntimeException(e.getMessage());
 		}
-		//System.out.println();
-		//System.out.println("********** Response Received **********");
-		//for (Map.Entry<String, String> entry : oauthLoginResponse.entrySet()) {
-		//	System.out.println(String.format("  %s = %s", entry.getKey(),
-		//			entry.getValue()));
-		//}
+		// System.out.println();
+		// System.out.println("********** JSON Response Received **********");
+		// for (Map.Entry<String, String> entry : oauthLoginResponse.entrySet()) {
+		// 	System.out.println(String.format("  %s = %s", entry.getKey(),
+		// 			entry.getValue()));
+		// }
 		return oauthLoginResponse;
 	}
 
@@ -322,16 +325,16 @@ public class UnityCallbackServlet extends HttpServlet {
 		Charset charset = null;
 		HttpEntity entity = response.getEntity();
 
-		//System.out.println();
-		//System.out.println("********** Response Received **********");
+		// System.out.println();
+		// System.out.println("********** URL Response Received **********");
 
-		//for (Map.Entry<String, Charset> entry : set) {
-		//	System.out.println(String.format("  %s = %s", entry.getKey(),
-		//			entry.getValue()));
-		//	if (entry.getKey().equalsIgnoreCase(HTTP.UTF_8)) {
-		//		charset = entry.getValue();
-		//	}
-		//}
+		// for (Map.Entry<String, Charset> entry : set) {
+		// 	System.out.println(String.format("  %s = %s", entry.getKey(),
+		// 			entry.getValue()));
+		// 	if (entry.getKey().equalsIgnoreCase(HTTP.UTF_8)) {
+		// 		charset = entry.getValue();
+		// 	}
+		// }
 
 		try {
 			List<NameValuePair> list = URLEncodedUtils.parse(
